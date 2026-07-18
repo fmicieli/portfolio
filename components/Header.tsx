@@ -83,7 +83,7 @@ export function Header() {
             onClick={() => setOpen(false)}
           />
           <nav
-            className="relative mx-auto mt-2 flex max-w-5xl flex-col gap-1 rounded-xl border border-white/10 bg-[rgba(16,16,18,0.97)] p-2 shadow-xl backdrop-blur-md sm:hidden"
+            className="relative mx-auto mt-2 flex max-w-5xl flex-col gap-1 rounded-xl border border-white/10 bg-[rgba(21,10,19,0.97)] p-2 shadow-xl backdrop-blur-md sm:hidden"
             aria-label="Navegación móvil"
           >
             {NAV_LINKS.map((link) => (

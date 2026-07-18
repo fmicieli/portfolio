@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #101012;
-  --color-fg: #f2f1ed;
-  --color-fg-secondary: #b8b8be;
-  --color-accent: #5b5fef;
-  --color-accent-light: #8a8df5;
+  /* Palette sampled directly from the obermann-webdesign.de reference video:
+     dark wine/plum background, warm off-white text, muted magenta accent. */
+  --color-bg: #150a13;
+  --color-fg: #f5f0f3;
+  --color-fg-secondary: #b3a6ac;
+  --color-accent: #8a2f52;
+  --color-accent-light: #d98bae;
 }
 
 @theme inline {
@@ -34,10 +36,10 @@ h1, h2, h3, h4 {
    drops the blur compositing in Chromium, so the "off" state keeps opacity:1
    and instead transitions blur(14px)->blur(0px) and the tint to transparent. */
 .glass {
-  background-color: rgba(242, 241, 237, 0.08);
+  background-color: rgba(245, 240, 243, 0.08);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 0.5px solid rgba(242, 241, 237, 0.14);
+  border: 0.5px solid rgba(245, 240, 243, 0.14);
   border-radius: 12px;
   transition:
     background-color 300ms ease,

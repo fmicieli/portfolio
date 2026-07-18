@@ -22,10 +22,10 @@ export function Shape3D({
   shine: MotionValue<number>;
 }) {
   const depthLayers = Array.from({ length: 18 }, (_, i) => i);
-  const darkest = { r: 30, g: 31, b: 68 };
-  const lightest = { r: 91, g: 95, b: 239 };
+  const darkest = { r: 20, g: 8, b: 17 };
+  const lightest = { r: 138, g: 47, b: 82 };
 
-  const shineBackground = useMotionTemplate`linear-gradient(105deg, #5b5fef 0%, #5b5fef calc(${shine}% - 16%), #e4e5fc calc(${shine}%), #5b5fef calc(${shine}% + 16%), #5b5fef 100%)`;
+  const shineBackground = useMotionTemplate`linear-gradient(105deg, #8a2f52 0%, #8a2f52 calc(${shine}% - 16%), #f0d6e2 calc(${shine}%), #8a2f52 calc(${shine}% + 16%), #8a2f52 100%)`;
 
   return (
     <div
