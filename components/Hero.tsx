@@ -9,7 +9,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { Monogram } from "@/components/Monogram";
+import { Shape3D } from "@/components/Shape3D";
 
 const TRANSITION_HEIGHT_VH = 220;
 
@@ -18,7 +18,7 @@ export function Hero() {
 
   // Manually measure how many pixels of scroll the pinned transition spans
   // (container height minus one viewport) and drive progress from plain
-  // window scrollY against that range. This is more robust than Framer's
+  // window scrollY against that range. More robust than Framer's
   // target+offset intersection measurement, which can end up stale if the
   // section's height shifts after web fonts finish loading.
   const [scrollRange, setScrollRange] = useState(1);
@@ -49,28 +49,25 @@ export function Hero() {
     rawY.set(((event.clientY - rect.top) / rect.height) * 100);
   }
 
-  // The F swells toward the viewer (a "zoom through the logo" pass), getting
+  // The shape swells toward the viewer (a "zoom through" pass), getting
   // bolder as it grows, then fading once it's "passed" — tumbling in 3D with
-  // a light sweeping across its face along the way, like a rotating glossy
-  // object rather than a flat sticker. The zoom expands from the gap between
-  // the F's two horizontal strokes (not the glyph's geometric center), so
-  // the camera reads as passing *through* that gap.
-  const monogramScale = useTransform(scrollYProgress, [0, 0.7], [1, 18]);
-  const monogramOpacity = useTransform(
+  // a light sweeping across its face along the way.
+  const shapeScale = useTransform(scrollYProgress, [0, 0.7], [1, 18]);
+  const shapeOpacity = useTransform(
     scrollYProgress,
     [0, 0.15, 0.45, 0.7],
-    [0.14, 0.9, 0.9, 0]
+    [0.5, 0.95, 0.95, 0]
   );
-  const monogramRotateY = useTransform(scrollYProgress, [0, 0.35, 0.7], [0, -22, 34]);
-  const monogramRotateX = useTransform(scrollYProgress, [0, 0.35, 0.7], [0, 12, -18]);
-  const monogramShine = useTransform(scrollYProgress, [0.05, 0.55], [-20, 120]);
+  const shapeRotateY = useTransform(scrollYProgress, [0, 0.35, 0.7], [0, -22, 34]);
+  const shapeRotateX = useTransform(scrollYProgress, [0, 0.35, 0.7], [0, 12, -18]);
+  const shapeShine = useTransform(scrollYProgress, [0.05, 0.55], [-20, 120]);
 
-  // The role title fades out early as the F starts its pass...
+  // Hero copy fades out early...
   const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -60]);
 
-  // ...then, once the F has substantially passed through and faded, "Sobre
-  // mí" and the intro paragraph fade in together in its place.
+  // ...then, once the shape has substantially passed through and faded, the
+  // next section's heading + subtitle fade in together in its place.
   const introOpacity = useTransform(scrollYProgress, [0.55, 0.9], [0, 1]);
   const introY = useTransform(scrollYProgress, [0.55, 0.9], [40, 0]);
   const introScale = useTransform(scrollYProgress, [0.55, 0.9], [0.85, 1]);
@@ -87,35 +84,38 @@ export function Hero() {
           style={{ background: glowBackground }}
         />
 
-        <Monogram
-          scale={monogramScale}
-          opacity={monogramOpacity}
-          rotateX={monogramRotateX}
-          rotateY={monogramRotateY}
-          shine={monogramShine}
+        <Shape3D
+          scale={shapeScale}
+          opacity={shapeOpacity}
+          rotateX={shapeRotateX}
+          rotateY={shapeRotateY}
+          shine={shapeShine}
         />
 
-        <div className="absolute inset-0 flex items-center px-6">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
           <motion.div
             style={{ opacity: heroOpacity, y: heroY, willChange: "opacity, transform" }}
-            className="relative mx-auto max-w-3xl"
+            className="relative max-w-2xl"
           >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 rounded-[2rem]"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(184,184,190,0.14) 0%, rgba(184,184,190,0.05) 60%, transparent 100%)",
-              }}
-            />
-            <h1 className="font-display text-4xl font-semibold leading-tight sm:text-5xl">
-              <span className="text-fg">UX/UI Designer</span>{" "}
-              <span className="text-accent-light">· Product Design</span>
+            <p className="mb-4 text-sm uppercase tracking-[0.2em] text-fg-secondary">
+              TODO: eyebrow
+            </p>
+            <h1 className="font-display text-4xl font-semibold leading-tight sm:text-6xl">
+              TODO: Título principal
             </h1>
+            <p className="mt-6 text-base leading-relaxed text-fg-secondary sm:text-lg">
+              TODO: bajada del hero
+            </p>
+            <a
+              href="#proyectos"
+              className="mt-10 inline-flex items-center rounded-full bg-fg px-8 py-3 text-sm font-medium text-bg transition-transform hover:scale-[1.03]"
+            >
+              TODO: CTA
+            </a>
           </motion.div>
         </div>
 
-        <div className="absolute inset-0 flex items-center px-6">
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           <motion.div
             style={{
               opacity: introOpacity,
@@ -123,26 +123,20 @@ export function Hero() {
               scale: introScale,
               willChange: "opacity, transform",
             }}
-            className="relative mx-auto max-w-3xl"
+            className="relative max-w-2xl"
           >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 rounded-[2rem]"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(184,184,190,0.14) 0%, rgba(184,184,190,0.05) 60%, transparent 100%)",
-              }}
-            />
             <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">
-              Sobre mí
+              TODO: título sección
             </h2>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-fg-secondary sm:text-lg">
-              3+ años diseñando productos B2B y SaaS. Sistemas de diseño, prototipos de
-              alta fidelidad y un flujo potenciado por IA generativa para explorar,
-              documentar y construir interfaces de forma autónoma.
+            <p className="mt-4 leading-relaxed text-fg-secondary">
+              TODO: bajada sección
             </p>
           </motion.div>
         </div>
+
+        <p className="absolute bottom-8 left-6 text-xs text-fg-secondary sm:left-8">
+          Scroll para explorar
+        </p>
       </div>
     </section>
   );

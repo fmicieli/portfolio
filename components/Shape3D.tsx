@@ -3,15 +3,12 @@
 import { motion, useMotionTemplate, type MotionValue } from "framer-motion";
 
 /**
- * Large "F" monogram: a layered-extrusion look (stacked offset copies
- * shading dark-to-light) so it reads as a beveled 3D object, not flat
- * background-clip text. `scale`/`opacity` let it sit quietly in the hero
- * background at rest; `rotateX`/`rotateY` give it a real tumble as it grows,
- * and `shine` sweeps a bright highlight band across its face — together
- * approximating a glossy rotating 3D object (à la obermann-webdesign.de)
- * without pulling in a WebGL dependency.
+ * Rotating 3D diamond — a stack of offset, shaded copies (for a beveled
+ * look) plus a moving shine band, driven by scroll-linked scale/rotate
+ * motion values. This is the exact shape used in the reference (a rotated
+ * square), standing in for whatever brand mark replaces it later.
  */
-export function Monogram({
+export function Shape3D({
   scale,
   opacity,
   rotateX,
@@ -42,12 +39,7 @@ export function Monogram({
           opacity,
           rotateX,
           rotateY,
-          // Zoom/rotate from the gap between the F's two horizontal strokes
-          // (calibrated empirically against the rendered glyph — see the
-          // pixel-scan measurement in the component's history) rather than
-          // the glyph's geometric center, so scrolling reads as passing
-          // *through* that gap instead of just growing from the middle.
-          transformOrigin: "63% 46.5%",
+          rotateZ: 45,
           willChange: "transform, opacity",
         }}
         className="relative select-none"
@@ -58,31 +50,25 @@ export function Monogram({
           const g = Math.round(darkest.g + (lightest.g - darkest.g) * t);
           const b = Math.round(darkest.b + (lightest.b - darkest.b) * t);
           return (
-            <span
+            <div
               key={i}
-              className="absolute inset-0 font-display font-semibold leading-none"
+              className="absolute"
               style={{
-                fontSize: "clamp(320px, 48vw, 760px)",
-                color: `rgb(${r}, ${g}, ${b})`,
-                transform: `translate(${i * 1.4}px, ${i * 1.4}px)`,
+                width: "clamp(220px, 32vw, 480px)",
+                height: "clamp(220px, 32vw, 480px)",
+                background: `rgb(${r}, ${g}, ${b})`,
+                transform: `translate(${i * 1.2}px, ${i * 1.2}px)`,
               }}
-            >
-              F
-            </span>
+            />
           );
         })}
-        <motion.span
-          className="relative font-display font-semibold leading-none"
+        <motion.div
           style={{
-            fontSize: "clamp(320px, 48vw, 760px)",
+            width: "clamp(220px, 32vw, 480px)",
+            height: "clamp(220px, 32vw, 480px)",
             backgroundImage: shineBackground,
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            color: "transparent",
           }}
-        >
-          F
-        </motion.span>
+        />
       </motion.div>
     </div>
   );
