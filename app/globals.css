@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #101012;
+  --color-fg: #f2f1ed;
+  --color-fg-secondary: #b8b8be;
+  --color-accent: #5b5fef;
+  --color-accent-light: #8a8df5;
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-fg: var(--color-fg);
+  --color-fg-secondary: var(--color-fg-secondary);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --font-display: var(--font-space-grotesk);
+  --font-body: var(--font-inter);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+}
+
+/* Glassmorphism shared surface: frosted panel that reads over scrolling content.
+   The on/off toggle animates background-color + blur radius rather than
+   opacity: animating `opacity` on an element that also has backdrop-filter
+   drops the blur compositing in Chromium, so the "off" state keeps opacity:1
+   and instead transitions blur(14px)->blur(0px) and the tint to transparent. */
+.glass {
+  background-color: rgba(242, 241, 237, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 0.5px solid rgba(242, 241, 237, 0.14);
+  border-radius: 12px;
+  transition:
+    background-color 300ms ease,
+    backdrop-filter 300ms ease,
+    -webkit-backdrop-filter 300ms ease,
+    border-color 300ms ease;
+}
+
+.glass-off {
+  background-color: transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
