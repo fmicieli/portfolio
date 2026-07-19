@@ -28,7 +28,7 @@ function maskFor(mask: string) {
   } as const;
 }
 
-const SIZE = "clamp(220px, 32vw, 480px)";
+const SIZE = "clamp(264px, 38.4vw, 576px)";
 
 /**
  * Rotating 3D brand mark: a beveled-edge extrusion (stacked offset copies)
@@ -70,6 +70,11 @@ export function Logo3D({
           opacity,
           rotateX,
           rotateY,
+          // Zoom/rotate from the gap between the top bar (y 8-26) and the
+          // legs (y 32-88) in the 0-100 mask coordinate space — the "F"'s
+          // horizontal lines — so scrolling reads as passing *through* that
+          // gap instead of growing from the shape's geometric center.
+          transformOrigin: "45% 29%",
           filter: "drop-shadow(6px 14px 18px rgba(0,0,0,0.55))",
           willChange: "transform, opacity",
         }}
