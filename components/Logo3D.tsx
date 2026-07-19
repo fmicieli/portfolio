@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionTemplate, type MotionValue } from "framer-motion";
+import { motion, useMotionTemplate, useTransform, type MotionValue } from "framer-motion";
 
 // The brand mark's silhouette (an angular "F" built from sheared blade
 // shapes), split into its three facets so each can carry its own static
@@ -30,12 +30,20 @@ function maskFor(mask: string) {
 
 const SIZE = "clamp(264px, 38.4vw, 576px)";
 
+// Fewer, chunkier steps at a near-uniform dark tone (rather than many
+// hair's-width layers fading smoothly) so the offset reads as a flat side
+// wall with a crisp corner, not a soft blurred double-exposure.
+const SIDE_STEPS = 10;
+const SIDE_STEP_OFFSET = 1.15; // px per step -> ~10px total depth
+const SIDE_DARK = { r: 26, g: 10, b: 21 };
+const SIDE_LIGHT = { r: 62, g: 22, b: 40 };
+
 /**
- * Rotating 3D brand mark: a beveled-edge extrusion (stacked offset copies)
- * for depth, three per-facet static metallic gradients (so the top bar and
- * each leg read as distinct faces catching light differently), a dynamic
- * highlight sweeping across the whole silhouette as it turns, and a cast
- * drop-shadow so it reads as sitting in front of the page, not painted on it.
+ * Rotating 3D brand mark: a stepped side-wall extrusion for a real
+ * corners-and-edges block look, three per-facet static metallic gradients
+ * on the front face, a dynamic highlight sweeping across the whole
+ * silhouette as it turns, a cast drop-shadow, and a cursor-driven tilt
+ * (`tiltX`/`tiltY`) layered on top of the scroll-driven rotation.
  */
 export function Logo3D({
   scale,
@@ -43,18 +51,29 @@ export function Logo3D({
   rotateX,
   rotateY,
   shine,
+  tiltX,
+  tiltY,
 }: {
   scale: MotionValue<number>;
   opacity: MotionValue<number>;
   rotateX: MotionValue<number>;
   rotateY: MotionValue<number>;
   shine: MotionValue<number>;
+  tiltX: MotionValue<number>;
+  tiltY: MotionValue<number>;
 }) {
-  const depthLayers = Array.from({ length: 18 }, (_, i) => i);
-  const darkest = { r: 20, g: 8, b: 17 };
-  const lightest = { r: 138, g: 47, b: 82 };
+  const sideLayers = Array.from({ length: SIDE_STEPS }, (_, i) => i);
 
   const shineBackground = useMotionTemplate`linear-gradient(105deg, transparent 0%, transparent calc(${shine}% - 18%), rgba(240,214,226,0.9) calc(${shine}%), transparent calc(${shine}% + 18%), transparent 100%)`;
+
+  const totalRotateX = useTransform(
+    [rotateX, tiltX],
+    ([a, b]: number[]) => a + b
+  );
+  const totalRotateY = useTransform(
+    [rotateY, tiltY],
+    ([a, b]: number[]) => a + b
+  );
 
   return (
     <div
@@ -68,8 +87,8 @@ export function Logo3D({
           height: SIZE,
           scale,
           opacity,
-          rotateX,
-          rotateY,
+          rotateX: totalRotateX,
+          rotateY: totalRotateY,
           // Zoom/rotate from the gap between the top bar (y 8-26) and the
           // legs (y 32-88) in the 0-100 mask coordinate space — the "F"'s
           // horizontal lines — so scrolling reads as passing *through* that
@@ -80,12 +99,13 @@ export function Logo3D({
         }}
         className="relative select-none"
       >
-        {/* Beveled edge: stacked offset copies shading dark -> accent. */}
-        {depthLayers.map((i) => {
-          const t = i / (depthLayers.length - 1);
-          const r = Math.round(darkest.r + (lightest.r - darkest.r) * t);
-          const g = Math.round(darkest.g + (lightest.g - darkest.g) * t);
-          const b = Math.round(darkest.b + (lightest.b - darkest.b) * t);
+        {/* Side wall: a handful of solidly-dark, more widely offset steps —
+            reads as a flat extruded edge with a real corner, not a blur. */}
+        {sideLayers.map((i) => {
+          const t = i / (sideLayers.length - 1);
+          const r = Math.round(SIDE_DARK.r + (SIDE_LIGHT.r - SIDE_DARK.r) * t);
+          const g = Math.round(SIDE_DARK.g + (SIDE_LIGHT.g - SIDE_DARK.g) * t);
+          const b = Math.round(SIDE_DARK.b + (SIDE_LIGHT.b - SIDE_DARK.b) * t);
           return (
             <div
               key={i}
@@ -94,7 +114,7 @@ export function Logo3D({
                 width: SIZE,
                 height: SIZE,
                 backgroundColor: `rgb(${r}, ${g}, ${b})`,
-                transform: `translate(${i * 0.35}px, ${i * 0.35}px)`,
+                transform: `translate(${(i + 1) * SIDE_STEP_OFFSET}px, ${(i + 1) * SIDE_STEP_OFFSET}px)`,
                 ...maskFor(MASK_ALL),
               }}
             />

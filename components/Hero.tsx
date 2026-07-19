@@ -123,6 +123,12 @@ export function Hero() {
   const glowY = useSpring(rawY, { stiffness: 60, damping: 20 });
   const glowBackground = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, rgba(138,47,82,0.35), transparent 55%)`;
 
+  // Cursor-driven tilt for the 3D logo: whichever side the pointer is nearer
+  // to dips back slightly (like pressing down on that edge), on top of the
+  // scroll-driven rotation — a subtle "it's a real object" cue.
+  const logoTiltY = useTransform(glowX, [0, 100], [-8, 8]);
+  const logoTiltX = useTransform(glowY, [0, 100], [8, -8]);
+
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
     rawX.set(((event.clientX - rect.left) / rect.width) * 100);
@@ -170,6 +176,8 @@ export function Hero() {
           rotateX={shapeRotateX}
           rotateY={shapeRotateY}
           shine={shapeShine}
+          tiltX={logoTiltX}
+          tiltY={logoTiltY}
         />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
