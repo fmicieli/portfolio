@@ -3,27 +3,39 @@
 import { motion, useMotionTemplate, type MotionValue } from "framer-motion";
 
 // The brand mark's silhouette (an angular "F" built from sheared blade
-// shapes), used as a CSS mask so solid/gradient fills can be clipped to its
-// outline — the same trick used for text via background-clip, generalized
-// to an arbitrary vector shape via mask-image.
-const LOGO_MASK =
+// shapes), split into its three facets so each can carry its own static
+// shading — like distinct faces of a faceted object catching light from
+// different angles — on top of the shared beveled-edge extrusion.
+const MASK_ALL =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='12,8 90,8 78,26 24,26'/%3E%3Cpolygon points='22,32 42,32 24,88 8,88'/%3E%3Cpolygon points='50,32 70,32 56,54 40,54'/%3E%3C/svg%3E\")";
+const MASK_TOP =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='12,8 90,8 78,26 24,26'/%3E%3C/svg%3E\")";
+const MASK_LEG_LONG =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='22,32 42,32 24,88 8,88'/%3E%3C/svg%3E\")";
+const MASK_LEG_SHORT =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,32 70,32 56,54 40,54'/%3E%3C/svg%3E\")";
 
-const maskStyle = {
-  WebkitMaskImage: LOGO_MASK,
-  maskImage: LOGO_MASK,
-  WebkitMaskSize: "contain",
-  maskSize: "contain",
-  WebkitMaskRepeat: "no-repeat",
-  maskRepeat: "no-repeat",
-  WebkitMaskPosition: "center",
-  maskPosition: "center",
-} as const;
+function maskFor(mask: string) {
+  return {
+    WebkitMaskImage: mask,
+    maskImage: mask,
+    WebkitMaskSize: "contain",
+    maskSize: "contain",
+    WebkitMaskRepeat: "no-repeat",
+    maskRepeat: "no-repeat",
+    WebkitMaskPosition: "center",
+    maskPosition: "center",
+  } as const;
+}
+
+const SIZE = "clamp(220px, 32vw, 480px)";
 
 /**
- * Rotating 3D brand mark — a stack of offset, shaded copies of the logo's
- * silhouette (for a beveled look) plus a moving shine band, driven by
- * scroll-linked scale/rotate motion values.
+ * Rotating 3D brand mark: a beveled-edge extrusion (stacked offset copies)
+ * for depth, three per-facet static metallic gradients (so the top bar and
+ * each leg read as distinct faces catching light differently), a dynamic
+ * highlight sweeping across the whole silhouette as it turns, and a cast
+ * drop-shadow so it reads as sitting in front of the page, not painted on it.
  */
 export function Logo3D({
   scale,
@@ -42,7 +54,7 @@ export function Logo3D({
   const darkest = { r: 20, g: 8, b: 17 };
   const lightest = { r: 138, g: 47, b: 82 };
 
-  const shineBackground = useMotionTemplate`linear-gradient(105deg, #8a2f52 0%, #8a2f52 calc(${shine}% - 16%), #f0d6e2 calc(${shine}%), #8a2f52 calc(${shine}% + 16%), #8a2f52 100%)`;
+  const shineBackground = useMotionTemplate`linear-gradient(105deg, transparent 0%, transparent calc(${shine}% - 18%), rgba(240,214,226,0.9) calc(${shine}%), transparent calc(${shine}% + 18%), transparent 100%)`;
 
   return (
     <div
@@ -52,14 +64,18 @@ export function Logo3D({
     >
       <motion.div
         style={{
+          width: SIZE,
+          height: SIZE,
           scale,
           opacity,
           rotateX,
           rotateY,
+          filter: "drop-shadow(6px 14px 18px rgba(0,0,0,0.55))",
           willChange: "transform, opacity",
         }}
         className="relative select-none"
       >
+        {/* Beveled edge: stacked offset copies shading dark -> accent. */}
         {depthLayers.map((i) => {
           const t = i / (depthLayers.length - 1);
           const r = Math.round(darkest.r + (lightest.r - darkest.r) * t);
@@ -68,23 +84,60 @@ export function Logo3D({
           return (
             <div
               key={i}
-              className="absolute"
+              className="absolute inset-0 m-auto"
               style={{
-                width: "clamp(220px, 32vw, 480px)",
-                height: "clamp(220px, 32vw, 480px)",
+                width: SIZE,
+                height: SIZE,
                 backgroundColor: `rgb(${r}, ${g}, ${b})`,
                 transform: `translate(${i * 0.35}px, ${i * 0.35}px)`,
-                ...maskStyle,
+                ...maskFor(MASK_ALL),
               }}
             />
           );
         })}
-        <motion.div
+
+        {/* Per-facet static "metallic" shading — each face catches light at
+            a different angle, so the mark reads as faceted, not flat. */}
+        <div
+          className="absolute inset-0 m-auto"
           style={{
-            width: "clamp(220px, 32vw, 480px)",
-            height: "clamp(220px, 32vw, 480px)",
+            width: SIZE,
+            height: SIZE,
+            backgroundImage:
+              "linear-gradient(100deg, #f3d9e6 0%, #b85d84 35%, #6b2440 100%)",
+            ...maskFor(MASK_TOP),
+          }}
+        />
+        <div
+          className="absolute inset-0 m-auto"
+          style={{
+            width: SIZE,
+            height: SIZE,
+            backgroundImage:
+              "linear-gradient(165deg, #a04a70 0%, #6b2440 55%, #300f1f 100%)",
+            ...maskFor(MASK_LEG_LONG),
+          }}
+        />
+        <div
+          className="absolute inset-0 m-auto"
+          style={{
+            width: SIZE,
+            height: SIZE,
+            backgroundImage:
+              "linear-gradient(205deg, #d290ac 0%, #8a2f52 50%, #401a2c 100%)",
+            ...maskFor(MASK_LEG_SHORT),
+          }}
+        />
+
+        {/* Dynamic highlight sweeping across the whole mark as it turns. */}
+        <motion.div
+          className="absolute inset-0 m-auto"
+          style={{
+            width: SIZE,
+            height: SIZE,
             backgroundImage: shineBackground,
-            ...maskStyle,
+            mixBlendMode: "screen",
+            ...maskFor(MASK_ALL),
           }}
         />
       </motion.div>
