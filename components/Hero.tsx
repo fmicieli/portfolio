@@ -9,7 +9,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { Shape3D } from "@/components/Shape3D";
+import { Logo3D } from "@/components/Logo3D";
 
 const TRANSITION_HEIGHT_VH = 220;
 
@@ -47,22 +47,40 @@ export function Hero() {
     let lastY = window.scrollY;
     let direction: "down" | "up" = "down";
 
+    // Block wheel/touch input while the auto-complete animation is running so
+    // residual trackpad momentum can't fight it mid-flight (that fight is
+    // what read as a "pause"/stutter instead of one continuous motion).
+    function blockInput(event: Event) {
+      event.preventDefault();
+    }
+    function startBlockingInput() {
+      window.addEventListener("wheel", blockInput, { passive: false });
+      window.addEventListener("touchmove", blockInput, { passive: false });
+    }
+    function stopBlockingInput() {
+      window.removeEventListener("wheel", blockInput);
+      window.removeEventListener("touchmove", blockInput);
+    }
+
     // Manual eased scroll instead of `scrollTo({ behavior: "smooth" })`: it's
     // portable across browsers/durations and we need precise control over
     // when `isAutoScrolling` clears.
-    function animateScrollTo(target: number, duration = 450) {
+    function animateScrollTo(target: number, duration = 380) {
       const start = window.scrollY;
       const distance = target - start;
       const startTime = performance.now();
 
       function step(now: number) {
         const t = Math.min((now - startTime) / duration, 1);
-        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        // ease-out cubic: quick to start, so it reads as a continuation of
+        // the user's own scroll momentum rather than a fresh, separate move.
+        const eased = 1 - Math.pow(1 - t, 3);
         window.scrollTo(0, start + distance * eased);
         if (t < 1) {
           rafId = requestAnimationFrame(step);
         } else {
           isAutoScrolling = false;
+          stopBlockingInput();
         }
       }
       rafId = requestAnimationFrame(step);
@@ -74,6 +92,7 @@ export function Hero() {
       if (y <= 0 || y >= scrollRange) return;
       const target = direction === "up" ? 0 : scrollRange;
       isAutoScrolling = true;
+      startBlockingInput();
       animateScrollTo(target);
     }
 
@@ -84,7 +103,7 @@ export function Hero() {
       else if (y < lastY) direction = "up";
       lastY = y;
       clearTimeout(debounceId);
-      debounceId = setTimeout(settle, 150);
+      debounceId = setTimeout(settle, 60);
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -92,6 +111,7 @@ export function Hero() {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(debounceId);
       if (rafId) cancelAnimationFrame(rafId);
+      stopBlockingInput();
     };
   }, [scrollRange]);
 
@@ -144,7 +164,7 @@ export function Hero() {
           style={{ background: glowBackground }}
         />
 
-        <Shape3D
+        <Logo3D
           scale={shapeScale}
           opacity={shapeOpacity}
           rotateX={shapeRotateX}

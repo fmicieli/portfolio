@@ -2,13 +2,30 @@
 
 import { motion, useMotionTemplate, type MotionValue } from "framer-motion";
 
+// The brand mark's silhouette (an angular "F" built from sheared blade
+// shapes), used as a CSS mask so solid/gradient fills can be clipped to its
+// outline — the same trick used for text via background-clip, generalized
+// to an arbitrary vector shape via mask-image.
+const LOGO_MASK =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='12,8 90,8 78,26 24,26'/%3E%3Cpolygon points='22,32 42,32 24,88 8,88'/%3E%3Cpolygon points='50,32 70,32 56,54 40,54'/%3E%3C/svg%3E\")";
+
+const maskStyle = {
+  WebkitMaskImage: LOGO_MASK,
+  maskImage: LOGO_MASK,
+  WebkitMaskSize: "contain",
+  maskSize: "contain",
+  WebkitMaskRepeat: "no-repeat",
+  maskRepeat: "no-repeat",
+  WebkitMaskPosition: "center",
+  maskPosition: "center",
+} as const;
+
 /**
- * Rotating 3D diamond — a stack of offset, shaded copies (for a beveled
- * look) plus a moving shine band, driven by scroll-linked scale/rotate
- * motion values. This is the exact shape used in the reference (a rotated
- * square), standing in for whatever brand mark replaces it later.
+ * Rotating 3D brand mark — a stack of offset, shaded copies of the logo's
+ * silhouette (for a beveled look) plus a moving shine band, driven by
+ * scroll-linked scale/rotate motion values.
  */
-export function Shape3D({
+export function Logo3D({
   scale,
   opacity,
   rotateX,
@@ -39,7 +56,6 @@ export function Shape3D({
           opacity,
           rotateX,
           rotateY,
-          rotateZ: 45,
           willChange: "transform, opacity",
         }}
         className="relative select-none"
@@ -56,8 +72,9 @@ export function Shape3D({
               style={{
                 width: "clamp(220px, 32vw, 480px)",
                 height: "clamp(220px, 32vw, 480px)",
-                background: `rgb(${r}, ${g}, ${b})`,
-                transform: `translate(${i * 1.2}px, ${i * 1.2}px)`,
+                backgroundColor: `rgb(${r}, ${g}, ${b})`,
+                transform: `translate(${i * 0.35}px, ${i * 0.35}px)`,
+                ...maskStyle,
               }}
             />
           );
@@ -67,6 +84,7 @@ export function Shape3D({
             width: "clamp(220px, 32vw, 480px)",
             height: "clamp(220px, 32vw, 480px)",
             backgroundImage: shineBackground,
+            ...maskStyle,
           }}
         />
       </motion.div>
