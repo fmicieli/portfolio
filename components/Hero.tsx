@@ -36,18 +36,21 @@ export function Hero() {
   const scrollYProgress = useTransform(scrollY, [0, scrollRange], [0, 1]);
 
   // Once the user stops scrolling mid-transition (partway through the pinned
-  // zoom), auto-complete it to whichever end is nearer instead of leaving the
-  // hero frozen half-zoomed. Ignored while an auto-scroll is already
-  // in flight, and a no-op once we've actually reached a boundary.
+  // zoom), auto-complete it in whichever direction they were scrolling —
+  // forward (into the next section) if they were scrolling down, back to the
+  // hero if they were scrolling up — instead of leaving it frozen half-zoomed.
+  // Direction of the gesture decides the target, not how far it got.
   useEffect(() => {
     let debounceId: ReturnType<typeof setTimeout> | undefined;
     let rafId: number | undefined;
     let isAutoScrolling = false;
+    let lastY = window.scrollY;
+    let direction: "down" | "up" = "down";
 
-    // Manual eased scroll instead of `scrollTo({ behavior: "smooth" })": it's
+    // Manual eased scroll instead of `scrollTo({ behavior: "smooth" })`: it's
     // portable across browsers/durations and we need precise control over
     // when `isAutoScrolling` clears.
-    function animateScrollTo(target: number, duration = 500) {
+    function animateScrollTo(target: number, duration = 450) {
       const start = window.scrollY;
       const distance = target - start;
       const startTime = performance.now();
@@ -69,14 +72,17 @@ export function Hero() {
       if (isAutoScrolling) return;
       const y = window.scrollY;
       if (y <= 0 || y >= scrollRange) return;
-      const progress = y / scrollRange;
-      const target = progress >= 0.5 ? scrollRange : 0;
+      const target = direction === "up" ? 0 : scrollRange;
       isAutoScrolling = true;
       animateScrollTo(target);
     }
 
     function handleScroll() {
       if (isAutoScrolling) return;
+      const y = window.scrollY;
+      if (y > lastY) direction = "down";
+      else if (y < lastY) direction = "up";
+      lastY = y;
       clearTimeout(debounceId);
       debounceId = setTimeout(settle, 150);
     }
