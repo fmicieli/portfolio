@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useScrolled } from "@/components/useScrolled";
 
 const NAV_LINKS = [
@@ -21,18 +20,7 @@ export function Header() {
           aria-hidden="true"
           className={`glass absolute inset-0 ${scrolled ? "" : "glass-off"}`}
         />
-        <div className="relative flex items-center justify-between px-4 py-3 sm:px-6">
-          <Link
-            href="/"
-            aria-label="Florencia Micieli — inicio"
-            className="flex items-center gap-3"
-            onClick={() => setOpen(false)}
-          >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent font-display text-base font-semibold text-bg">
-              F
-            </span>
-          </Link>
-
+        <div className="relative flex items-center justify-center px-4 py-3 sm:px-6">
           <nav className="hidden items-center gap-8 sm:flex" aria-label="Navegación principal">
             {NAV_LINKS.map((link) => (
               <a
@@ -47,7 +35,7 @@ export function Header() {
 
           <button
             type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-fg sm:hidden"
+            className="absolute right-4 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-fg sm:hidden"
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}

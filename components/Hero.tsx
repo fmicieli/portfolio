@@ -35,6 +35,60 @@ export function Hero() {
   const { scrollY } = useScroll();
   const scrollYProgress = useTransform(scrollY, [0, scrollRange], [0, 1]);
 
+  // Once the user stops scrolling mid-transition (partway through the pinned
+  // zoom), auto-complete it to whichever end is nearer instead of leaving the
+  // hero frozen half-zoomed. Ignored while an auto-scroll is already
+  // in flight, and a no-op once we've actually reached a boundary.
+  useEffect(() => {
+    let debounceId: ReturnType<typeof setTimeout> | undefined;
+    let rafId: number | undefined;
+    let isAutoScrolling = false;
+
+    // Manual eased scroll instead of `scrollTo({ behavior: "smooth" })": it's
+    // portable across browsers/durations and we need precise control over
+    // when `isAutoScrolling` clears.
+    function animateScrollTo(target: number, duration = 500) {
+      const start = window.scrollY;
+      const distance = target - start;
+      const startTime = performance.now();
+
+      function step(now: number) {
+        const t = Math.min((now - startTime) / duration, 1);
+        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        window.scrollTo(0, start + distance * eased);
+        if (t < 1) {
+          rafId = requestAnimationFrame(step);
+        } else {
+          isAutoScrolling = false;
+        }
+      }
+      rafId = requestAnimationFrame(step);
+    }
+
+    function settle() {
+      if (isAutoScrolling) return;
+      const y = window.scrollY;
+      if (y <= 0 || y >= scrollRange) return;
+      const progress = y / scrollRange;
+      const target = progress >= 0.5 ? scrollRange : 0;
+      isAutoScrolling = true;
+      animateScrollTo(target);
+    }
+
+    function handleScroll() {
+      if (isAutoScrolling) return;
+      clearTimeout(debounceId);
+      debounceId = setTimeout(settle, 150);
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(debounceId);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [scrollRange]);
+
   // Cursor-follow glow: the radial gradient's center tracks the pointer, with
   // a spring so it trails smoothly instead of snapping.
   const rawX = useMotionValue(75);
