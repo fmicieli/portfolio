@@ -4,24 +4,14 @@ import { motion, useTransform, type MotionValue } from "framer-motion";
 
 const skills = [
   {
-    title: "User Research",
-    text: "Understanding real user needs through interviews, personas, and journey mapping.",
-    tags: ["Claude", "Manual research", "Google Meet", "Loom", "Miro"],
-  },
-  {
-    title: "Testing & Heuristic Evaluation",
-    text: "Validating usability with real users and Nielsen's heuristics.",
-    tags: ["Google Meet", "Loom"],
-  },
-  {
-    title: "Accessibility",
-    text: "Designing inclusive interfaces that meet WCAG AA standards.",
-    tags: ["Stark (Figma)"],
+    title: "Research & Testing",
+    text: "Understanding real user needs through interviews, usability testing, and Nielsen's heuristics.",
+    tags: ["Claude", "Google Meet", "Loom", "Miro"],
   },
   {
     title: "UX/UI Design",
-    text: "Wireframes, high-fidelity prototypes, and scalable design systems.",
-    tags: ["Figma"],
+    text: "Wireframes, high-fidelity prototypes, and accessible, scalable design systems.",
+    tags: ["Figma", "Stark"],
   },
   {
     title: "Documentation & Visual Design",
@@ -35,7 +25,10 @@ const skills = [
   },
 ];
 
-const COLUMNS = 3;
+// 4 cards fit comfortably as a 2x2 grid across common desktop widths — a
+// single 4-across row would need ~1770px of unbroken width for cards this
+// size, which only very wide monitors have.
+const COLUMNS = 2;
 const ROWS = Math.ceil(skills.length / COLUMNS);
 
 const CARD_WIDTH = 400;
@@ -80,15 +73,15 @@ const CARD_STYLE =
   "flex flex-col gap-3 rounded-xl border border-white/10 bg-white/10 p-5 backdrop-blur-md";
 
 /**
- * Desktop/tablet only: all six cards start already distributed across one
+ * Desktop/tablet only: all four cards start already distributed across one
  * fanned horizontal row (peeking up from below the viewport), then on
- * continued scroll condense into a compact 3-column x 2-row grid — driven by
+ * continued scroll condense into a compact 2-column x 2-row grid — driven by
  * `progress` (0-1), a slice of the hero's own pinned scroll rather than the
  * cards' own position in the page, since they live inside Hero's sticky
  * viewport and never actually scroll past it on their own.
  *
  * Each card's x target is unique (its starting single-row slot -> its final
- * grid column), so each needs its own motion value — six of them, named
+ * grid column), so each needs its own motion value — four of them, named
  * individually rather than built in a loop so this stays a fixed, static set
  * of hook calls. y only takes one of two values (which row a card ends up
  * in), so those two are shared.
@@ -97,15 +90,13 @@ function StackToGrid({ progress }: { progress: MotionValue<number> }) {
   const opacity = useTransform(progress, [0, 0.4], [0, 1]);
 
   const startX = (i: number) => (i - (skills.length - 1) / 2) * START_STEP;
-  const finalX = (i: number) => ((i % COLUMNS) - 1) * CARD_STEP;
+  const finalX = (i: number) => ((i % COLUMNS) - (COLUMNS - 1) / 2) * CARD_STEP;
 
   const x0 = useTransform(progress, [0, 1], [startX(0), finalX(0)]);
   const x1 = useTransform(progress, [0, 1], [startX(1), finalX(1)]);
   const x2 = useTransform(progress, [0, 1], [startX(2), finalX(2)]);
   const x3 = useTransform(progress, [0, 1], [startX(3), finalX(3)]);
-  const x4 = useTransform(progress, [0, 1], [startX(4), finalX(4)]);
-  const x5 = useTransform(progress, [0, 1], [startX(5), finalX(5)]);
-  const xByIndex = [x0, x1, x2, x3, x4, x5];
+  const xByIndex = [x0, x1, x2, x3];
 
   const yRow0 = useTransform(progress, [0, 1], [PEEK_OFFSET, 0]);
   const yRow1 = useTransform(progress, [0, 1], [PEEK_OFFSET, ROW_STEP]);
