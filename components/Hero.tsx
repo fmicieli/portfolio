@@ -13,21 +13,10 @@ import { Logo3D } from "@/components/Logo3D";
 
 const TRANSITION_HEIGHT_VH = 220;
 
-// Block wheel/touch input while the auto-complete animation is running so
-// residual trackpad momentum can't fight it mid-flight (that fight is what
-// read as a "pause"/stutter instead of one continuous motion). Stateless, so
-// these live outside the component for a stable reference.
-function blockInput(event: Event) {
-  event.preventDefault();
-}
-function startBlockingInput() {
-  window.addEventListener("wheel", blockInput, { passive: false });
-  window.addEventListener("touchmove", blockInput, { passive: false });
-}
-function stopBlockingInput() {
-  window.removeEventListener("wheel", blockInput);
-  window.removeEventListener("touchmove", blockInput);
-}
+// The hero's zoom-through always takes this long, no matter how the user
+// triggered it (a light wheel tick, a hard swipe, or the CTA button) — the
+// transition's pace is fixed, never scrubbed by raw scroll speed.
+const TRANSITION_DURATION = 1100;
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,9 +40,10 @@ export function Hero() {
   const { scrollY } = useScroll();
   const scrollYProgress = useTransform(scrollY, [0, scrollRange], [0, 1]);
 
-  // Shared auto-scroll machinery: used both to auto-complete the transition
-  // when the user stops mid-scroll, and to drive the hero CTA (clicking it
-  // does exactly what letting go mid-scroll-down does).
+  // Shared auto-scroll machinery: window.scrollY is only ever moved by this
+  // controlled, fixed-duration animation while inside the hero's pinned
+  // zone — never scrubbed directly by the user's raw scroll/touch input —
+  // so the visual transition always plays at the same pace.
   const scrollRangeRef = useRef(scrollRange);
   useEffect(() => {
     scrollRangeRef.current = scrollRange;
@@ -62,38 +52,82 @@ export function Hero() {
   const rafRef = useRef<number | undefined>(undefined);
   const isAutoScrollingRef = useRef(false);
 
-  // Manual eased scroll instead of `scrollTo({ behavior: "smooth" })`: it's
-  // portable across browsers/durations and we need precise control over
-  // when `isAutoScrolling` clears.
-  const animateScrollTo = useCallback((target: number, duration = 380) => {
+  const animateScrollTo = useCallback((target: number, duration = TRANSITION_DURATION) => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     const start = window.scrollY;
     const distance = target - start;
+    if (distance === 0) return;
     const startTime = performance.now();
     isAutoScrollingRef.current = true;
-    startBlockingInput();
 
     function step(now: number) {
       const t = Math.min((now - startTime) / duration, 1);
-      // ease-out cubic: quick to start, so it reads as a continuation of
-      // the user's own scroll momentum rather than a fresh, separate move.
-      const eased = 1 - Math.pow(1 - t, 3);
+      // ease-in-out: gentle start and finish, constant felt speed in the
+      // middle — reads as one deliberate motion regardless of trigger.
+      const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       window.scrollTo(0, start + distance * eased);
       if (t < 1) {
         rafRef.current = requestAnimationFrame(step);
       } else {
         isAutoScrollingRef.current = false;
-        stopBlockingInput();
       }
     }
     rafRef.current = requestAnimationFrame(step);
   }, []);
 
-  // Once the user stops scrolling mid-transition (partway through the pinned
-  // zoom), auto-complete it in whichever direction they were scrolling —
-  // forward (into the next section) if they were scrolling down, back to the
-  // hero if they were scrolling up — instead of leaving it frozen half-zoomed.
-  // Direction of the gesture decides the target, not how far it got.
+  // Scrolling inside the hero's pinned zone always plays the *same*
+  // fixed-duration transition, no matter how fast/slow/far the actual
+  // gesture was: the very first wheel/touch tick decides a direction and
+  // hands off entirely to the animation, and every further raw input is
+  // swallowed until it finishes. Outside the zone (already past the hero,
+  // or above the page top), input passes through untouched.
+  useEffect(() => {
+    function tryTrigger(direction: "down" | "up") {
+      if (isAutoScrollingRef.current) return true;
+      const y = window.scrollY;
+      if (direction === "down" && (y < 0 || y >= scrollRangeRef.current)) return false;
+      if (direction === "up" && (y <= 0 || y > scrollRangeRef.current)) return false;
+      animateScrollTo(direction === "down" ? scrollRangeRef.current : 0);
+      return true;
+    }
+
+    function handleWheel(event: WheelEvent) {
+      if (tryTrigger(event.deltaY > 0 ? "down" : "up")) {
+        event.preventDefault();
+      }
+    }
+
+    let touchStartY = 0;
+    function handleTouchStart(event: TouchEvent) {
+      touchStartY = event.touches[0]?.clientY ?? 0;
+    }
+    function handleTouchMove(event: TouchEvent) {
+      if (isAutoScrollingRef.current) {
+        event.preventDefault();
+        return;
+      }
+      const currentY = event.touches[0]?.clientY ?? touchStartY;
+      const deltaY = touchStartY - currentY;
+      if (Math.abs(deltaY) < 8) return;
+      if (tryTrigger(deltaY > 0 ? "down" : "up")) {
+        event.preventDefault();
+      }
+    }
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [animateScrollTo]);
+
+  // Fallback for input that doesn't fire wheel/touch events — keyboard
+  // paging, scrollbar dragging: if one of those leaves scrollY mid-
+  // transition, complete it the same way, at the same fixed pace.
   useEffect(() => {
     let debounceId: ReturnType<typeof setTimeout> | undefined;
     let lastY = window.scrollY;
@@ -103,8 +137,7 @@ export function Hero() {
       if (isAutoScrollingRef.current) return;
       const y = window.scrollY;
       if (y <= 0 || y >= scrollRangeRef.current) return;
-      const target = direction === "up" ? 0 : scrollRangeRef.current;
-      animateScrollTo(target);
+      animateScrollTo(direction === "up" ? 0 : scrollRangeRef.current);
     }
 
     function handleScroll() {
@@ -121,7 +154,6 @@ export function Hero() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(debounceId);
-      stopBlockingInput();
     };
   }, [animateScrollTo]);
 
