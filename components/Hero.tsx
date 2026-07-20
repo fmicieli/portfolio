@@ -245,12 +245,12 @@ export function Hero() {
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
           <motion.div
             style={{ opacity: heroOpacity, y: heroY, willChange: "opacity, transform" }}
-            className="relative max-w-2xl"
+            className="relative max-w-3xl"
           >
             <p className="mb-4 text-sm uppercase tracking-[0.2em] text-fg-secondary">
               Florencia Micieli
             </p>
-            <h1 className="font-display text-4xl font-semibold leading-tight sm:text-6xl">
+            <h1 className="whitespace-nowrap font-display text-xl font-semibold leading-tight sm:text-4xl lg:text-6xl">
               UX / UI - Product Designer
             </h1>
             <button
