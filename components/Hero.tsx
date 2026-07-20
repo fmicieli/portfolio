@@ -24,6 +24,12 @@ const TRANSITION_DURATION = 1100;
 // runs behind the header at any point in the scroll, not just at rest.
 const HEADER_GAP = 24;
 
+// Fraction of scrollYProgress for the pinned zone's middle snap stop: the
+// logo has finished fading (done by 0.7) and the testimonial cards have
+// arrived — visible, still stacked near the bottom — but haven't spread into
+// a row yet. One scroll gesture stops here; the next one finishes the spread.
+const MID_PROGRESS = 0.75;
+
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +92,30 @@ export function Hero() {
     rafRef.current = requestAnimationFrame(step);
   }, []);
 
+  // The pinned zone has three snap stops — top, the mid-checkpoint (cards
+  // arrived but still stacked), and the end (cards spread into a row) —
+  // rather than jumping straight from top to bottom in one gesture. Each
+  // scroll/touch tick (or CTA click) advances to the next stop in that
+  // direction; a second gesture from the mid stop finishes the spread.
+  const goToStop = useCallback(
+    (direction: "down" | "up") => {
+      const range = scrollRangeRef.current;
+      const stops = [0, range * MID_PROGRESS, range];
+      const y = window.scrollY;
+      if (direction === "down") {
+        const next = stops.find((stop) => stop > y + 1);
+        if (next === undefined) return false;
+        animateScrollTo(next);
+        return true;
+      }
+      const previousStops = stops.filter((stop) => stop < y - 1);
+      if (previousStops.length === 0) return false;
+      animateScrollTo(previousStops[previousStops.length - 1]);
+      return true;
+    },
+    [animateScrollTo]
+  );
+
   // Scrolling inside the hero's pinned zone always plays the *same*
   // fixed-duration transition, no matter how fast/slow/far the actual
   // gesture was: the very first wheel/touch tick decides a direction and
@@ -95,11 +125,7 @@ export function Hero() {
   useEffect(() => {
     function tryTrigger(direction: "down" | "up") {
       if (isAutoScrollingRef.current) return true;
-      const y = window.scrollY;
-      if (direction === "down" && (y < 0 || y >= scrollRangeRef.current)) return false;
-      if (direction === "up" && (y <= 0 || y > scrollRangeRef.current)) return false;
-      animateScrollTo(direction === "down" ? scrollRangeRef.current : 0);
-      return true;
+      return goToStop(direction);
     }
 
     function handleWheel(event: WheelEvent) {
@@ -134,11 +160,12 @@ export function Hero() {
       window.removeEventListener("touchmove", handleTouchMove);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [animateScrollTo]);
+  }, [goToStop]);
 
   // Fallback for input that doesn't fire wheel/touch events — keyboard
-  // paging, scrollbar dragging: if one of those leaves scrollY mid-
-  // transition, complete it the same way, at the same fixed pace.
+  // paging, scrollbar dragging: if one of those leaves scrollY between two
+  // stops, snap to the nearer one in the direction of travel, at the same
+  // fixed pace.
   useEffect(() => {
     let debounceId: ReturnType<typeof setTimeout> | undefined;
     let lastY = window.scrollY;
@@ -147,8 +174,11 @@ export function Hero() {
     function settle() {
       if (isAutoScrollingRef.current) return;
       const y = window.scrollY;
-      if (y <= 0 || y >= scrollRangeRef.current) return;
-      animateScrollTo(direction === "up" ? 0 : scrollRangeRef.current);
+      const range = scrollRangeRef.current;
+      if (y <= 0 || y >= range) return;
+      const stops = [0, range * MID_PROGRESS, range];
+      if (stops.some((stop) => Math.abs(stop - y) < 1)) return;
+      goToStop(direction);
     }
 
     function handleScroll() {
@@ -166,10 +196,12 @@ export function Hero() {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(debounceId);
     };
-  }, [animateScrollTo]);
+  }, [goToStop]);
 
+  // "View more" behaves exactly like one scroll gesture — advances to the
+  // next stop, not straight to the end.
   function handleCtaClick() {
-    animateScrollTo(scrollRange);
+    goToStop("down");
   }
 
   // Cursor-follow glow: the radial gradient's center tracks the pointer, with
