@@ -303,10 +303,10 @@ export function Hero() {
         </div>
 
         {/* Heading sits directly above the cards with a fixed 48px gap, and
-            the whole group is bottom-anchored so the cards' peeking/cut-off
-            state at the mid checkpoint reads against the real screen edge —
-            not two independently-positioned pieces that happen to line up. */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-end gap-12 overflow-hidden px-6 text-center">
+            the whole group is vertically centered as one block within the
+            pinned viewport once settled — not bottom-anchored, which left
+            all the leftover space stacked above it instead of split evenly. */}
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-12 overflow-hidden px-6 text-center">
           <motion.div
             style={{ opacity: headingOpacity, y: headingY, willChange: "opacity, transform" }}
             className="relative mx-auto max-w-2xl px-6"
