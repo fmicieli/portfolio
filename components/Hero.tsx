@@ -248,10 +248,10 @@ export function Hero() {
             className="relative max-w-2xl"
           >
             <p className="mb-4 text-sm uppercase tracking-[0.2em] text-fg-secondary">
-              UX / UI - Product Designer
+              Florencia Micieli
             </p>
             <h1 className="font-display text-4xl font-semibold leading-tight sm:text-6xl">
-              Florencia Micieli
+              UX / UI - Product Designer
             </h1>
             <button
               type="button"
