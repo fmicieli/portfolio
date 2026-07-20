@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useScrolled } from "@/components/useScrolled";
 
 const NAV_LINKS = [
   { href: "/#proyectos", label: "Proyectos" },
@@ -11,14 +10,14 @@ const NAV_LINKS = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const scrolled = useScrolled();
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div
-        aria-hidden="true"
-        className={`glass-header absolute inset-0 ${scrolled ? "" : "glass-off"}`}
-      />
+      {/* Solid match of the page background, not a translucent/blurred
+          panel: content sliding up now simply disappears behind it exactly
+          where it should, instead of visibly popping into view a moment
+          before it reaches the header. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-bg" />
       <div className="relative mx-auto max-w-5xl px-4 pt-4 sm:px-6">
         <div className="relative flex items-center justify-center px-4 py-3 sm:px-6">
           <nav className="hidden items-center gap-8 sm:flex" aria-label="Navegación principal">
