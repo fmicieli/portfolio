@@ -241,6 +241,11 @@ export function Hero() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -60]);
 
+  // "Scroll para explorar" is only useful before the user has actually
+  // scrolled — gone as soon as the first scroll gesture starts moving
+  // things, well before it reaches the mid checkpoint.
+  const scrollHintOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
+
   // ...then, once the shape has substantially passed through and faded, the
   // testimonials heading + cards take over the same pinned screen — cards
   // get their own 0-1 slice of this to drive their stack-to-row spread.
@@ -319,9 +324,12 @@ export function Hero() {
           </div>
         </div>
 
-        <p className="absolute bottom-8 left-6 text-xs text-fg-secondary sm:left-8">
+        <motion.p
+          style={{ opacity: scrollHintOpacity }}
+          className="pointer-events-none absolute bottom-8 left-6 text-xs text-fg-secondary sm:left-8"
+        >
           Scroll para explorar
-        </p>
+        </motion.p>
       </div>
     </section>
   );
