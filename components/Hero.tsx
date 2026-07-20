@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import {
   motion,
   useMotionTemplate,
@@ -12,6 +12,22 @@ import {
 import { Logo3D } from "@/components/Logo3D";
 
 const TRANSITION_HEIGHT_VH = 220;
+
+// Block wheel/touch input while the auto-complete animation is running so
+// residual trackpad momentum can't fight it mid-flight (that fight is what
+// read as a "pause"/stutter instead of one continuous motion). Stateless, so
+// these live outside the component for a stable reference.
+function blockInput(event: Event) {
+  event.preventDefault();
+}
+function startBlockingInput() {
+  window.addEventListener("wheel", blockInput, { passive: false });
+  window.addEventListener("touchmove", blockInput, { passive: false });
+}
+function stopBlockingInput() {
+  window.removeEventListener("wheel", blockInput);
+  window.removeEventListener("touchmove", blockInput);
+}
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -35,6 +51,44 @@ export function Hero() {
   const { scrollY } = useScroll();
   const scrollYProgress = useTransform(scrollY, [0, scrollRange], [0, 1]);
 
+  // Shared auto-scroll machinery: used both to auto-complete the transition
+  // when the user stops mid-scroll, and to drive the hero CTA (clicking it
+  // does exactly what letting go mid-scroll-down does).
+  const scrollRangeRef = useRef(scrollRange);
+  useEffect(() => {
+    scrollRangeRef.current = scrollRange;
+  }, [scrollRange]);
+
+  const rafRef = useRef<number | undefined>(undefined);
+  const isAutoScrollingRef = useRef(false);
+
+  // Manual eased scroll instead of `scrollTo({ behavior: "smooth" })`: it's
+  // portable across browsers/durations and we need precise control over
+  // when `isAutoScrolling` clears.
+  const animateScrollTo = useCallback((target: number, duration = 380) => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    const start = window.scrollY;
+    const distance = target - start;
+    const startTime = performance.now();
+    isAutoScrollingRef.current = true;
+    startBlockingInput();
+
+    function step(now: number) {
+      const t = Math.min((now - startTime) / duration, 1);
+      // ease-out cubic: quick to start, so it reads as a continuation of
+      // the user's own scroll momentum rather than a fresh, separate move.
+      const eased = 1 - Math.pow(1 - t, 3);
+      window.scrollTo(0, start + distance * eased);
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(step);
+      } else {
+        isAutoScrollingRef.current = false;
+        stopBlockingInput();
+      }
+    }
+    rafRef.current = requestAnimationFrame(step);
+  }, []);
+
   // Once the user stops scrolling mid-transition (partway through the pinned
   // zoom), auto-complete it in whichever direction they were scrolling —
   // forward (into the next section) if they were scrolling down, back to the
@@ -42,62 +96,19 @@ export function Hero() {
   // Direction of the gesture decides the target, not how far it got.
   useEffect(() => {
     let debounceId: ReturnType<typeof setTimeout> | undefined;
-    let rafId: number | undefined;
-    let isAutoScrolling = false;
     let lastY = window.scrollY;
     let direction: "down" | "up" = "down";
 
-    // Block wheel/touch input while the auto-complete animation is running so
-    // residual trackpad momentum can't fight it mid-flight (that fight is
-    // what read as a "pause"/stutter instead of one continuous motion).
-    function blockInput(event: Event) {
-      event.preventDefault();
-    }
-    function startBlockingInput() {
-      window.addEventListener("wheel", blockInput, { passive: false });
-      window.addEventListener("touchmove", blockInput, { passive: false });
-    }
-    function stopBlockingInput() {
-      window.removeEventListener("wheel", blockInput);
-      window.removeEventListener("touchmove", blockInput);
-    }
-
-    // Manual eased scroll instead of `scrollTo({ behavior: "smooth" })`: it's
-    // portable across browsers/durations and we need precise control over
-    // when `isAutoScrolling` clears.
-    function animateScrollTo(target: number, duration = 380) {
-      const start = window.scrollY;
-      const distance = target - start;
-      const startTime = performance.now();
-
-      function step(now: number) {
-        const t = Math.min((now - startTime) / duration, 1);
-        // ease-out cubic: quick to start, so it reads as a continuation of
-        // the user's own scroll momentum rather than a fresh, separate move.
-        const eased = 1 - Math.pow(1 - t, 3);
-        window.scrollTo(0, start + distance * eased);
-        if (t < 1) {
-          rafId = requestAnimationFrame(step);
-        } else {
-          isAutoScrolling = false;
-          stopBlockingInput();
-        }
-      }
-      rafId = requestAnimationFrame(step);
-    }
-
     function settle() {
-      if (isAutoScrolling) return;
+      if (isAutoScrollingRef.current) return;
       const y = window.scrollY;
-      if (y <= 0 || y >= scrollRange) return;
-      const target = direction === "up" ? 0 : scrollRange;
-      isAutoScrolling = true;
-      startBlockingInput();
+      if (y <= 0 || y >= scrollRangeRef.current) return;
+      const target = direction === "up" ? 0 : scrollRangeRef.current;
       animateScrollTo(target);
     }
 
     function handleScroll() {
-      if (isAutoScrolling) return;
+      if (isAutoScrollingRef.current) return;
       const y = window.scrollY;
       if (y > lastY) direction = "down";
       else if (y < lastY) direction = "up";
@@ -110,10 +121,13 @@ export function Hero() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(debounceId);
-      if (rafId) cancelAnimationFrame(rafId);
       stopBlockingInput();
     };
-  }, [scrollRange]);
+  }, [animateScrollTo]);
+
+  function handleCtaClick() {
+    animateScrollTo(scrollRange);
+  }
 
   // Cursor-follow glow: the radial gradient's center tracks the pointer, with
   // a spring so it trails smoothly instead of snapping.
@@ -186,20 +200,18 @@ export function Hero() {
             className="relative max-w-2xl"
           >
             <p className="mb-4 text-sm uppercase tracking-[0.2em] text-fg-secondary">
-              TODO: eyebrow
+              UX / UI - Product Designer
             </p>
             <h1 className="font-display text-4xl font-semibold leading-tight sm:text-6xl">
-              TODO: Título principal
+              Florencia Micieli
             </h1>
-            <p className="mt-6 text-base leading-relaxed text-fg-secondary sm:text-lg">
-              TODO: bajada del hero
-            </p>
-            <a
-              href="#proyectos"
-              className="mt-10 inline-flex items-center rounded-full bg-fg px-8 py-3 text-sm font-medium text-bg transition-transform hover:scale-[1.03]"
+            <button
+              type="button"
+              onClick={handleCtaClick}
+              className="mt-10 inline-flex items-center rounded-full bg-fg px-8 py-3 text-sm font-medium text-bg transition hover:scale-[1.03] hover:bg-accent-light"
             >
-              TODO: CTA
-            </a>
+              View more
+            </button>
           </motion.div>
         </div>
 
