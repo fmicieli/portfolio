@@ -208,12 +208,6 @@ export function Hero() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -60]);
 
-  // ...then, once the shape has substantially passed through and faded, the
-  // next section's heading + subtitle fade in together in its place.
-  const introOpacity = useTransform(scrollYProgress, [0.55, 0.9], [0, 1]);
-  const introY = useTransform(scrollYProgress, [0.55, 0.9], [40, 0]);
-  const introScale = useTransform(scrollYProgress, [0.55, 0.9], [0.85, 1]);
-
   return (
     <section
       ref={containerRef}
@@ -260,25 +254,6 @@ export function Hero() {
             >
               View more
             </button>
-          </motion.div>
-        </div>
-
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6 text-center">
-          <motion.div
-            style={{
-              opacity: introOpacity,
-              y: introY,
-              scale: introScale,
-              willChange: "opacity, transform",
-            }}
-            className="relative max-w-2xl"
-          >
-            <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">
-              TODO: título sección
-            </h2>
-            <p className="mt-4 leading-relaxed text-fg-secondary">
-              TODO: bajada sección
-            </p>
           </motion.div>
         </div>
 
