@@ -39,8 +39,9 @@ const ROTATE_STEP = 6;
 
 // How far below the viewport's bottom edge the row still sits at the mid
 // checkpoint, cut off by the sticky container's overflow-hidden, before the
-// second scroll gesture settles everything into the final row.
-const PEEK_OFFSET = 460;
+// second scroll gesture settles everything into the final row. Raised 30%
+// (was 460) so more of the fanned stack already shows before any scrolling.
+const PEEK_OFFSET = 322;
 
 function CardContent({ item }: { item: (typeof skills)[number] }) {
   return (
