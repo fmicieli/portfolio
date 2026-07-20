@@ -14,12 +14,12 @@ export function Header() {
   const scrolled = useScrolled();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6">
-      <div className="relative mx-auto max-w-5xl">
-        <div
-          aria-hidden="true"
-          className={`glass absolute inset-0 ${scrolled ? "" : "glass-off"}`}
-        />
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div
+        aria-hidden="true"
+        className={`glass-header absolute inset-0 ${scrolled ? "" : "glass-off"}`}
+      />
+      <div className="relative mx-auto max-w-5xl px-4 pt-4 sm:px-6">
         <div className="relative flex items-center justify-center px-4 py-3 sm:px-6">
           <nav className="hidden items-center gap-8 sm:flex" aria-label="Navegación principal">
             {NAV_LINKS.map((link) => (
@@ -71,7 +71,7 @@ export function Header() {
             onClick={() => setOpen(false)}
           />
           <nav
-            className="relative mx-auto mt-2 flex max-w-5xl flex-col gap-1 rounded-xl border border-white/10 bg-[rgba(21,10,19,0.97)] p-2 shadow-xl backdrop-blur-md sm:hidden"
+            className="relative mx-4 mt-2 flex flex-col gap-1 rounded-xl border border-white/10 bg-[rgba(21,10,19,0.97)] p-2 shadow-xl backdrop-blur-md sm:hidden"
             aria-label="Navegación móvil"
           >
             {NAV_LINKS.map((link) => (

@@ -205,7 +205,12 @@ export function Hero() {
   const introScale = useTransform(scrollYProgress, [0.55, 0.9], [0.85, 1]);
 
   return (
-    <section ref={containerRef} className="relative" style={{ height: `${TRANSITION_HEIGHT_VH}vh` }}>
+    <section
+      ref={containerRef}
+      id="hero"
+      className="relative"
+      style={{ height: `${TRANSITION_HEIGHT_VH}vh` }}
+    >
       <div
         className="sticky top-0 h-screen overflow-hidden px-6"
         onMouseMove={handleMouseMove}

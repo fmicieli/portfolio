@@ -48,6 +48,26 @@ h1, h2, h3, h4 {
     border-color 300ms ease;
 }
 
+/* Header's own bar: full-bleed edge to edge and flush with the very top of
+   the page, so it reads as one continuous strip rather than the floating
+   inset "pill" the shared .glass panel is designed for. Declared before
+   .glass-off so the off-state rules below win the cascade when both
+   classes are applied together (equal specificity, source order decides). */
+.glass-header {
+  background-color: rgba(245, 240, 243, 0.08);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 0 solid transparent;
+  border-bottom-width: 0.5px;
+  border-bottom-color: rgba(245, 240, 243, 0.14);
+  border-radius: 0;
+  transition:
+    background-color 300ms ease,
+    backdrop-filter 300ms ease,
+    -webkit-backdrop-filter 300ms ease,
+    border-color 300ms ease;
+}
+
 .glass-off {
   background-color: transparent;
   backdrop-filter: blur(0px);
