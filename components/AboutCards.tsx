@@ -8,18 +8,21 @@ const testimonials = [
   { quote: "TODO: testimonio placeholder tres.", name: "TODO: Nombre", role: "TODO: Empresa" },
 ];
 
-const CARD_WIDTH = 267;
-const CARD_GAP = 24;
+// 50% bigger than the original 267/24, and the gap widened further on top
+// of that (not just proportionally) per feedback that the cards read as too
+// close together.
+const CARD_WIDTH = 400;
+const CARD_GAP = 56;
 const CARD_STEP = CARD_WIDTH + CARD_GAP;
 
 function CardContent({ item }: { item: (typeof testimonials)[number] }) {
   return (
     <>
-      <span className="font-display text-3xl leading-none text-fg">&ldquo;</span>
-      <p className="text-sm leading-relaxed text-fg-secondary">{item.quote}</p>
+      <span className="font-display text-4xl leading-none text-fg">&ldquo;</span>
+      <p className="text-base leading-relaxed text-fg-secondary">{item.quote}</p>
       <div className="mt-auto">
-        <p className="text-sm font-medium text-fg">{item.name}</p>
-        <p className="text-sm text-fg-secondary">{item.role}</p>
+        <p className="text-base font-medium text-fg">{item.name}</p>
+        <p className="text-base text-fg-secondary">{item.role}</p>
       </div>
     </>
   );
@@ -30,10 +33,10 @@ function CardContent({ item }: { item: (typeof testimonials)[number] }) {
 // edge at the mid checkpoint — enough that only roughly the top half is
 // visible, cut off by the sticky container's overflow-hidden, before the
 // second scroll gesture brings it fully into view.
-const PEEK_OFFSET = 400;
+const PEEK_OFFSET = 460;
 
 const CARD_STYLE =
-  "flex flex-col gap-6 rounded-xl border border-white/10 bg-white/10 p-6 backdrop-blur-md";
+  "flex flex-col gap-8 rounded-xl border border-white/10 bg-white/10 p-8 backdrop-blur-md";
 
 /**
  * Desktop/tablet only: the three cards start overlapped and mostly below the
@@ -59,7 +62,7 @@ function StackToRow({ progress }: { progress: MotionValue<number> }) {
   ];
 
   return (
-    <div className="relative mx-auto hidden h-[320px] max-w-4xl sm:block">
+    <div className="relative mx-auto hidden h-[380px] max-w-6xl sm:block">
       {testimonials.map((item, i) => (
         <motion.div
           key={item.name + i}
