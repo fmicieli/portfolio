@@ -306,10 +306,12 @@ export function Hero() {
             style={{ opacity: headingOpacity, y: headingY, willChange: "opacity, transform" }}
             className="relative mx-auto max-w-2xl px-6"
           >
-            <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">
-              TODO: título sección
-            </h2>
-            <p className="mt-4 leading-relaxed text-fg-secondary">TODO: bajada sección</p>
+            <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">About me</h2>
+            <p className="mt-4 leading-relaxed text-fg-secondary">
+              3+ years designing digital products for B2B and SaaS environments. Design
+              systems, high-fidelity prototypes, and a workflow enhanced by generative AI
+              to explore, document, and build interfaces independently.
+            </p>
           </motion.div>
 
           <div className="relative w-full">
