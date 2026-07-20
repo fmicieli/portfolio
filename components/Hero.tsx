@@ -114,7 +114,7 @@ export function Hero() {
       else if (y < lastY) direction = "up";
       lastY = y;
       clearTimeout(debounceId);
-      debounceId = setTimeout(settle, 60);
+      debounceId = setTimeout(settle, 40);
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -215,7 +215,7 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6 text-center">
           <motion.div
             style={{
               opacity: introOpacity,

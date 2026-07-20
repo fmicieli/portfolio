@@ -33,8 +33,8 @@ const SIZE = "clamp(264px, 38.4vw, 576px)";
 // Fewer, chunkier steps at a near-uniform dark tone (rather than many
 // hair's-width layers fading smoothly) so the offset reads as a flat side
 // wall with a crisp corner, not a soft blurred double-exposure.
-const SIDE_STEPS = 10;
-const SIDE_STEP_OFFSET = 1.15; // px per step -> ~10px total depth
+const SIDE_STEPS = 6;
+const SIDE_STEP_OFFSET = 1.8; // px per step -> ~10px total depth, fewer masked layers to paint per frame
 const SIDE_DARK = { r: 26, g: 10, b: 21 };
 const SIDE_LIGHT = { r: 62, g: 22, b: 40 };
 
@@ -94,7 +94,7 @@ export function Logo3D({
           // horizontal lines — so scrolling reads as passing *through* that
           // gap instead of growing from the shape's geometric center.
           transformOrigin: "45% 29%",
-          filter: "drop-shadow(6px 14px 18px rgba(0,0,0,0.55))",
+          filter: "drop-shadow(5px 10px 10px rgba(0,0,0,0.5))",
           willChange: "transform, opacity",
         }}
         className="relative select-none"
