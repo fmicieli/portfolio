@@ -18,19 +18,29 @@ const TRANSITION_HEIGHT_VH = 220;
 // transition's pace is fixed, never scrubbed by raw scroll speed.
 const TRANSITION_DURATION = 1100;
 
+// The header has no background of its own — instead the pinned hero reserves
+// this much space below it (header height + a 24px gap) so its content never
+// runs behind the header at any point in the scroll, not just at rest.
+const HEADER_GAP = 24;
+
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Manually measure how many pixels of scroll the pinned transition spans
-  // (container height minus one viewport) and drive progress from plain
-  // window scrollY against that range. More robust than Framer's
+  // (container height minus the sticky viewport) and drive progress from
+  // plain window scrollY against that range. More robust than Framer's
   // target+offset intersection measurement, which can end up stale if the
   // section's height shifts after web fonts finish loading.
   const [scrollRange, setScrollRange] = useState(1);
+  const [headerClearance, setHeaderClearance] = useState(0);
   useEffect(() => {
     function measure() {
       if (!containerRef.current) return;
-      setScrollRange(Math.max(containerRef.current.offsetHeight - window.innerHeight, 1));
+      const headerHeight = document.querySelector("header")?.offsetHeight ?? 0;
+      const clearance = headerHeight + HEADER_GAP;
+      setHeaderClearance(clearance);
+      const stickyHeight = window.innerHeight - clearance;
+      setScrollRange(Math.max(containerRef.current.offsetHeight - stickyHeight, 1));
     }
     measure();
     window.addEventListener("resize", measure);
@@ -212,7 +222,8 @@ export function Hero() {
       style={{ height: `${TRANSITION_HEIGHT_VH}vh` }}
     >
       <div
-        className="sticky top-0 h-screen overflow-hidden px-6"
+        className="sticky overflow-hidden px-6"
+        style={{ top: headerClearance, height: `calc(100vh - ${headerClearance}px)` }}
         onMouseMove={handleMouseMove}
       >
         <motion.div

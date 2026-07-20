@@ -13,11 +13,9 @@ export function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      {/* Solid match of the page background, not a translucent/blurred
-          panel: content sliding up now simply disappears behind it exactly
-          where it should, instead of visibly popping into view a moment
-          before it reaches the header. */}
-      <div aria-hidden="true" className="absolute inset-0 bg-bg" />
+      {/* No background at all: page content now reserves its own space below
+          the header (see Hero's headerClearance) instead of ever running
+          behind it, so there's nothing left to hide or blend with here. */}
       <div className="relative mx-auto max-w-5xl px-4 pt-4 sm:px-6">
         <div className="relative flex items-center justify-center px-4 py-3 sm:px-6">
           <nav className="hidden items-center gap-8 sm:flex" aria-label="Navegación principal">
