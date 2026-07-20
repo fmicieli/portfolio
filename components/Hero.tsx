@@ -297,10 +297,14 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <div className="pointer-events-none absolute inset-0 overflow-hidden px-6 text-center">
+        {/* Heading sits directly above the cards with a fixed 48px gap, and
+            the whole group is bottom-anchored so the cards' peeking/cut-off
+            state at the mid checkpoint reads against the real screen edge —
+            not two independently-positioned pieces that happen to line up. */}
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-end gap-12 overflow-hidden px-6 text-center">
           <motion.div
             style={{ opacity: headingOpacity, y: headingY, willChange: "opacity, transform" }}
-            className="absolute inset-x-0 top-[18%] mx-auto max-w-2xl px-6"
+            className="relative mx-auto max-w-2xl px-6"
           >
             <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">
               TODO: título sección
@@ -308,10 +312,7 @@ export function Hero() {
             <p className="mt-4 leading-relaxed text-fg-secondary">TODO: bajada sección</p>
           </motion.div>
 
-          {/* Anchored to the very bottom of the pinned viewport so the cards'
-              peeking/cut-off state at the mid checkpoint reads against the
-              real screen edge, not just an arbitrary offset. */}
-          <div className="absolute inset-x-0 bottom-0 w-full">
+          <div className="relative w-full">
             <AboutCards progress={revealProgress} />
           </div>
         </div>
