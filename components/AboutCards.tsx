@@ -25,28 +25,32 @@ function CardContent({ item }: { item: (typeof testimonials)[number] }) {
   );
 }
 
+// The card block itself is anchored to the bottom edge of the hero's pinned
+// viewport (see Hero.tsx), and this is how far it still hangs below that
+// edge at the mid checkpoint — enough that only roughly the top half is
+// visible, cut off by the sticky container's overflow-hidden, before the
+// second scroll gesture brings it fully into view.
+const PEEK_OFFSET = 400;
+
+const CARD_STYLE =
+  "flex flex-col gap-6 rounded-xl border border-white/10 bg-white/10 p-6 backdrop-blur-md";
+
 /**
- * Desktop/tablet only: the three cards start fully overlapped, peeking up
- * from below like a fanned stack, then spread apart into a row — driven by
- * `progress` (0-1), a slice of the hero's own pinned scroll rather than the
- * cards' own position in the page, since they live inside Hero's sticky
- * viewport and never actually scroll past it on their own.
- *
- * `progress` covers two scroll gestures worth of pinned motion (see Hero's
- * MID_PROGRESS stop): by roughly its midpoint the cards should already read
- * as "arrived" — visible, mostly settled vertically — but still stacked, not
- * yet spread into a row. So opacity/y resolve early (0-0.6) while the
- * horizontal spread and un-fanning only start after that (0.4-1).
+ * Desktop/tablet only: the three cards start overlapped and mostly below the
+ * viewport's bottom edge, then rise and spread apart into a row together —
+ * driven by `progress` (0-1), a slice of the hero's own pinned scroll rather
+ * than the cards' own position in the page, since they live inside Hero's
+ * sticky viewport and never actually scroll past it on their own.
  */
 function StackToRow({ progress }: { progress: MotionValue<number> }) {
-  const y = useTransform(progress, [0, 0.6], [200, 0]);
-  const opacity = useTransform(progress, [0, 0.5], [0, 1]);
+  const y = useTransform(progress, [0, 1], [PEEK_OFFSET, 0]);
+  const opacity = useTransform(progress, [0, 0.4], [0, 1]);
 
-  const xLeft = useTransform(progress, [0.4, 1], [0, -CARD_STEP]);
-  const xRight = useTransform(progress, [0.4, 1], [0, CARD_STEP]);
-  const rotateLeft = useTransform(progress, [0.4, 1], [-8, 0]);
-  const rotateMid = useTransform(progress, [0.4, 1], [3, 0]);
-  const rotateRight = useTransform(progress, [0.4, 1], [8, 0]);
+  const xLeft = useTransform(progress, [0, 1], [0, -CARD_STEP]);
+  const xRight = useTransform(progress, [0, 1], [0, CARD_STEP]);
+  const rotateLeft = useTransform(progress, [0, 1], [-8, 0]);
+  const rotateMid = useTransform(progress, [0, 1], [3, 0]);
+  const rotateRight = useTransform(progress, [0, 1], [8, 0]);
 
   const cardMotion = [
     { x: xLeft, rotate: rotateLeft, z: 1 },
@@ -71,7 +75,7 @@ function StackToRow({ progress }: { progress: MotionValue<number> }) {
             opacity,
             zIndex: cardMotion[i].z,
           }}
-          className="flex flex-col gap-6 rounded-xl border border-white/10 bg-white/5 p-6"
+          className={CARD_STYLE}
         >
           <CardContent item={item} />
         </motion.div>
@@ -80,21 +84,18 @@ function StackToRow({ progress }: { progress: MotionValue<number> }) {
   );
 }
 
-/** Mobile: single column, simple fade/slide-in — the horizontal spread above
- *  doesn't translate to a viewport this narrow. Same shared `progress`,
- *  since this also lives inside Hero's pinned viewport. */
+/** Mobile: single column, same bottom-anchored peek-then-rise, no horizontal
+ *  spread — the row layout above doesn't translate to a viewport this
+ *  narrow. Same shared `progress`, since this also lives inside Hero's
+ *  pinned viewport. */
 function StackedColumn({ progress }: { progress: MotionValue<number> }) {
-  const y = useTransform(progress, [0, 0.6], [60, 0]);
-  const opacity = useTransform(progress, [0, 0.5], [0, 1]);
+  const y = useTransform(progress, [0, 1], [PEEK_OFFSET, 0]);
+  const opacity = useTransform(progress, [0, 0.4], [0, 1]);
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4 px-6 sm:hidden">
       {testimonials.map((item, i) => (
-        <motion.div
-          key={item.name + i}
-          style={{ opacity, y }}
-          className="flex flex-col gap-4 rounded-xl border border-white/10 bg-white/5 p-4"
-        >
+        <motion.div key={item.name + i} style={{ opacity, y }} className={CARD_STYLE}>
           <CardContent item={item} />
         </motion.div>
       ))}
