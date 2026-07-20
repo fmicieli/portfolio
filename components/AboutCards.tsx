@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useTransform, type MotionValue } from "framer-motion";
 
 const testimonials = [
   { quote: "TODO: testimonio placeholder uno.", name: "TODO: Nombre", role: "TODO: Empresa" },
@@ -28,25 +27,20 @@ function CardContent({ item }: { item: (typeof testimonials)[number] }) {
 
 /**
  * Desktop/tablet only: the three cards start fully overlapped, peeking up
- * from below the viewport like a fanned stack, then spread apart into a row
- * as the section keeps scrolling into view — tracked continuously against
- * scroll position rather than a single fade-in trigger.
+ * from below like a fanned stack, then spread apart into a row — driven by
+ * `progress` (0-1), a slice of the hero's own pinned scroll rather than the
+ * cards' own position in the page, since they live inside Hero's sticky
+ * viewport and never actually scroll past it on their own.
  */
-function StackToRow() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "start 40%"],
-  });
+function StackToRow({ progress }: { progress: MotionValue<number> }) {
+  const y = useTransform(progress, [0, 1], [160, 0]);
+  const opacity = useTransform(progress, [0, 0.35, 1], [0, 1, 1]);
 
-  const y = useTransform(scrollYProgress, [0, 1], [160, 0]);
-  const opacity = useTransform(scrollYProgress, [0, 0.35, 1], [0, 1, 1]);
-
-  const xLeft = useTransform(scrollYProgress, [0, 1], [0, -CARD_STEP]);
-  const xRight = useTransform(scrollYProgress, [0, 1], [0, CARD_STEP]);
-  const rotateLeft = useTransform(scrollYProgress, [0, 1], [-8, 0]);
-  const rotateMid = useTransform(scrollYProgress, [0, 1], [3, 0]);
-  const rotateRight = useTransform(scrollYProgress, [0, 1], [8, 0]);
+  const xLeft = useTransform(progress, [0, 1], [0, -CARD_STEP]);
+  const xRight = useTransform(progress, [0, 1], [0, CARD_STEP]);
+  const rotateLeft = useTransform(progress, [0, 1], [-8, 0]);
+  const rotateMid = useTransform(progress, [0, 1], [3, 0]);
+  const rotateRight = useTransform(progress, [0, 1], [8, 0]);
 
   const cardMotion = [
     { x: xLeft, rotate: rotateLeft, z: 1 },
@@ -55,7 +49,7 @@ function StackToRow() {
   ];
 
   return (
-    <div ref={containerRef} className="relative mx-auto hidden h-[320px] max-w-4xl sm:block">
+    <div className="relative mx-auto hidden h-[320px] max-w-4xl sm:block">
       {testimonials.map((item, i) => (
         <motion.div
           key={item.name + i}
@@ -80,19 +74,20 @@ function StackToRow() {
   );
 }
 
-/** Mobile: single column, simple fade/slide-in per card — the horizontal
- *  spread above doesn't translate to a viewport this narrow. */
-function StackedColumn() {
+/** Mobile: single column, simple fade/slide-in — the horizontal spread above
+ *  doesn't translate to a viewport this narrow. Same shared `progress`,
+ *  since this also lives inside Hero's pinned viewport. */
+function StackedColumn({ progress }: { progress: MotionValue<number> }) {
+  const y = useTransform(progress, [0, 1], [60, 0]);
+  const opacity = useTransform(progress, [0, 0.7, 1], [0, 1, 1]);
+
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 sm:hidden">
+    <div className="mx-auto flex max-w-4xl flex-col gap-4 px-6 sm:hidden">
       {testimonials.map((item, i) => (
         <motion.div
           key={item.name + i}
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col gap-6 rounded-xl border border-white/10 bg-white/5 p-6"
+          style={{ opacity, y }}
+          className="flex flex-col gap-4 rounded-xl border border-white/10 bg-white/5 p-4"
         >
           <CardContent item={item} />
         </motion.div>
@@ -101,11 +96,11 @@ function StackedColumn() {
   );
 }
 
-export function AboutCards() {
+export function AboutCards({ progress }: { progress: MotionValue<number> }) {
   return (
     <>
-      <StackToRow />
-      <StackedColumn />
+      <StackToRow progress={progress} />
+      <StackedColumn progress={progress} />
     </>
   );
 }

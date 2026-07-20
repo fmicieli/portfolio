@@ -10,6 +10,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { Logo3D } from "@/components/Logo3D";
+import { AboutCards } from "@/components/AboutCards";
 
 const TRANSITION_HEIGHT_VH = 220;
 
@@ -208,6 +209,13 @@ export function Hero() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -60]);
 
+  // ...then, once the shape has substantially passed through and faded, the
+  // testimonials heading + cards take over the same pinned screen — cards
+  // get their own 0-1 slice of this to drive their stack-to-row spread.
+  const revealProgress = useTransform(scrollYProgress, [0.55, 1], [0, 1]);
+  const headingOpacity = useTransform(revealProgress, [0, 0.25], [0, 1]);
+  const headingY = useTransform(revealProgress, [0, 0.25], [30, 0]);
+
   return (
     <section
       ref={containerRef}
@@ -255,6 +263,22 @@ export function Hero() {
               View more
             </button>
           </motion.div>
+        </div>
+
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-10 overflow-hidden px-6 text-center">
+          <motion.div
+            style={{ opacity: headingOpacity, y: headingY, willChange: "opacity, transform" }}
+            className="relative max-w-2xl"
+          >
+            <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">
+              TODO: título sección
+            </h2>
+            <p className="mt-4 leading-relaxed text-fg-secondary">TODO: bajada sección</p>
+          </motion.div>
+
+          <div className="relative w-full">
+            <AboutCards progress={revealProgress} />
+          </div>
         </div>
 
         <p className="absolute bottom-8 left-6 text-xs text-fg-secondary sm:left-8">
