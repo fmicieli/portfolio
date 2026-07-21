@@ -20,8 +20,8 @@ export function Header() {
           make that cut read as an intentional header surface rather than
           content just vanishing mid-scroll. */}
       <div aria-hidden="true" className="absolute inset-0 bg-bg" />
-      <div className="relative mx-auto max-w-5xl px-2 pt-2 sm:px-3">
-        <div className="relative flex items-center justify-center px-2 py-1.5 sm:px-3">
+      <div className="relative mx-auto max-w-5xl px-1 pt-2 sm:px-1.5">
+        <div className="relative flex items-center justify-center px-1 py-1.5 sm:px-1.5">
           <nav className="hidden items-center gap-4 sm:flex" aria-label="Main navigation">
             {NAV_LINKS.map((link) => (
               <a

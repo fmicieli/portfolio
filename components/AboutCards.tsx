@@ -139,7 +139,7 @@ function StackedGrid({ progress }: { progress: MotionValue<number> }) {
   const opacity = useTransform(progress, [0, 0.4], [0, 1]);
 
   return (
-    <div className="mx-auto grid max-w-4xl grid-cols-2 gap-1.5 px-3 sm:hidden">
+    <div className="mx-auto grid max-w-4xl grid-cols-2 gap-1.5 px-1.5 sm:hidden">
       {skills.map((item) => (
         <motion.div key={item.title} style={{ opacity, y }} className={CARD_STYLE}>
           <CardContent item={item} />

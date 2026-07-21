@@ -2,7 +2,7 @@ import { Reveal } from "@/components/Reveal";
 
 export function Contact() {
   return (
-    <section id="contact" className="relative mx-auto max-w-3xl px-3 py-14">
+    <section id="contact" className="relative mx-auto max-w-3xl px-1.5 py-14">
       <Reveal>
         <h2 className="text-2xl font-semibold">Contact</h2>
       </Reveal>

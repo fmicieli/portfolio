@@ -4,7 +4,7 @@ import { Reveal } from "@/components/Reveal";
 
 export function ProjectsGrid() {
   return (
-    <section id="projects" className="relative mx-auto max-w-5xl px-3 py-14">
+    <section id="projects" className="relative mx-auto max-w-5xl px-1.5 py-14">
       <Reveal>
         <h2 className="text-2xl font-semibold">Featured projects</h2>
       </Reveal>

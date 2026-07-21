@@ -2,7 +2,7 @@ import { Reveal } from "@/components/Reveal";
 
 export function Vibecoding() {
   return (
-    <section className="relative mx-auto max-w-3xl px-3 py-14">
+    <section className="relative mx-auto max-w-3xl px-1.5 py-14">
       <Reveal>
         <h2 className="text-2xl font-semibold">How I work</h2>
       </Reveal>

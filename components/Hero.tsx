@@ -261,7 +261,7 @@ export function Hero() {
       style={{ height: `${TRANSITION_HEIGHT_VH}vh` }}
     >
       <div
-        className="sticky overflow-hidden px-3"
+        className="sticky overflow-hidden px-1.5"
         style={{ top: headerClearance, height: `calc(100vh - ${headerClearance}px)` }}
         onMouseMove={handleMouseMove}
       >
@@ -281,7 +281,7 @@ export function Hero() {
           tiltY={logoTiltY}
         />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-1.5 text-center">
           <motion.div
             style={{ opacity: heroOpacity, y: heroY, willChange: "opacity, transform" }}
             className="relative max-w-3xl"
@@ -306,10 +306,10 @@ export function Hero() {
             the whole group is vertically centered as one block within the
             pinned viewport once settled — not bottom-anchored, which left
             all the leftover space stacked above it instead of split evenly. */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden px-3 text-center">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden px-1.5 text-center">
           <motion.div
             style={{ opacity: headingOpacity, y: headingY, willChange: "opacity, transform" }}
-            className="relative mx-auto max-w-2xl px-3"
+            className="relative mx-auto max-w-2xl px-1.5"
           >
             <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">About me</h2>
             <p className="mt-2 leading-relaxed text-fg-secondary">
