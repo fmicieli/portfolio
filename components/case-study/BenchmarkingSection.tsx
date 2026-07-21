@@ -23,7 +23,7 @@ export function BenchmarkingSection({
       <ul className="mt-6 flex flex-wrap justify-center gap-8">
         {competitors.map((row) => (
           <li key={row.name} className="flex flex-col items-center gap-2">
-            <div className="flex h-28 w-28 items-center justify-center rounded-full bg-white p-4">
+            <div className="flex h-[90px] w-[90px] items-center justify-center rounded-full bg-white p-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={row.logo} alt={row.name} className="h-full w-full object-contain" />
             </div>
