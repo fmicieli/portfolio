@@ -13,7 +13,7 @@ export function ProjectCard({ project }: { project: Project }) {
           <img
             src={project.coverImage}
             alt={project.coverAlt}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-top"
           />
         ) : (
           <div

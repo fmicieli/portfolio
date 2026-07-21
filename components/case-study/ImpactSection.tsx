@@ -5,11 +5,11 @@ export function ImpactSection({ heading, cards }: { heading: string; cards: Impa
   return (
     <div>
       <SectionHeading heading={heading} />
-      <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+      <ul className="mt-4 grid gap-2 sm:grid-cols-2">
         {cards.map((card) => (
-          <li key={card.title} className="rounded-xl border border-white/10 bg-white/5 p-5">
+          <li key={card.title} className="rounded-xl border border-white/10 bg-white/5 p-2.5">
             <p className="font-medium text-fg">{card.title}</p>
-            <dl className="mt-4 flex flex-col gap-3 text-sm">
+            <dl className="mt-2 flex flex-col gap-1.5 text-sm">
               <div>
                 <dt className="text-xs uppercase tracking-[0.1em] text-fg-secondary/70">
                   Problem

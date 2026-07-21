@@ -15,7 +15,7 @@ export function CaseStudyBlocks({ blocks }: { blocks: CaseStudyBlock[] }) {
       {blocks.map((block, i) => {
         if (block.type === "hero") {
           return (
-            <div key={i} className="pb-14">
+            <div key={i} className="pb-7">
               <CaseStudyHero
                 title={block.title}
                 subtitle={block.subtitle}
@@ -28,14 +28,14 @@ export function CaseStudyBlocks({ blocks }: { blocks: CaseStudyBlock[] }) {
 
         if (block.type === "disclaimer") {
           return (
-            <p key={i} className="py-10 text-xs leading-relaxed text-fg-secondary/70">
+            <p key={i} className="py-5 text-xs leading-relaxed text-fg-secondary/70">
               {block.text}
             </p>
           );
         }
 
         return (
-          <Reveal key={i} className="py-14">
+          <Reveal key={i} className="py-7">
             {block.type === "problem" && (
               <ProblemSection
                 heading={block.heading}

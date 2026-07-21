@@ -85,7 +85,7 @@ export const projects: Project[] = [
     tagline:
       "Simplifying the home screen and transfer flow to improve the mobile banking experience.",
     tags: ["UX Research", "Mobile", "Fintech"],
-    coverImage: "/projects/bbva-frances/home-screen.png",
+    coverImage: "/projects/bbva-frances/cover.png",
     coverAlt: "Screens from the BBVA Francés app redesign",
     behanceUrl: "https://www.behance.net/gallery/243625059/BBVA-Francs-Caso-de-Estudio",
     contentReady: true,

@@ -15,9 +15,9 @@ export function SolutionSection({
   return (
     <div>
       <SectionHeading heading={heading} subheading={subheading} />
-      <ul className="mt-8 flex flex-col gap-5">
+      <ul className="mt-4 flex flex-col gap-2.5">
         {points.map((point) => (
-          <li key={point.number} className="flex gap-4">
+          <li key={point.number} className="flex gap-2">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/20 font-display text-sm font-semibold text-accent-light">
               {point.number}
             </span>
@@ -30,11 +30,11 @@ export function SolutionSection({
           </li>
         ))}
       </ul>
-      <ul className="mt-6 flex flex-wrap gap-2">
+      <ul className="mt-3 flex flex-wrap gap-1">
         {annotations.map((annotation) => (
           <li
             key={annotation}
-            className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-fg-secondary"
+            className="rounded-full border border-white/10 bg-white/5 px-1.5 py-0.5 text-xs text-fg-secondary"
           >
             {annotation}
           </li>
