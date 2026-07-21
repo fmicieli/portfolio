@@ -20,10 +20,10 @@ export function BenchmarkingSection({
     <div>
       <SectionHeading heading={heading} subheading={subheading} />
 
-      <ul className="mt-6 flex flex-wrap justify-center gap-6 sm:justify-start sm:gap-8">
+      <ul className="mt-6 flex flex-wrap justify-center gap-8">
         {competitors.map((row) => (
           <li key={row.name} className="flex flex-col items-center gap-2">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-2">
+            <div className="flex h-28 w-28 items-center justify-center rounded-full bg-white p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={row.logo} alt={row.name} className="h-full w-full object-contain" />
             </div>
