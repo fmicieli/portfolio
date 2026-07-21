@@ -5,7 +5,12 @@ export type CaseStudySection = {
 
 export type CaseStudyMeta = { label: string; value: string };
 export type ProblemStat = { value: string; label: string };
-export type BenchmarkRow = { name: string; steps: number; highlight?: boolean };
+export type BenchmarkRow = {
+  name: string;
+  steps: number;
+  highlight?: boolean;
+  logo?: string;
+};
 export type SolutionPoint = { number: string; title: string; description: string };
 export type FlowStep = { number: string; label: string };
 export type GuideStep = { number: string; title: string; bullets: string[] };
@@ -148,10 +153,18 @@ export const projects: Project[] = [
         subheading: "We analyzed 4 competitors in the Argentine market",
         note: "Steps to complete a transfer",
         rows: [
-          { name: "Banco Galicia", steps: 6 },
-          { name: "Mercado Pago", steps: 4 },
-          { name: "Naranja X", steps: 4 },
-          { name: "Cuenta DNI", steps: 2 },
+          {
+            name: "Banco Galicia",
+            steps: 6,
+            logo: "/projects/bbva-frances/logos/banco-galicia.png",
+          },
+          {
+            name: "Mercado Pago",
+            steps: 4,
+            logo: "/projects/bbva-frances/logos/mercado-pago.png",
+          },
+          { name: "Naranja X", steps: 4, logo: "/projects/bbva-frances/logos/naranja-x.png" },
+          { name: "Cuenta DNI", steps: 2, logo: "/projects/bbva-frances/logos/cuenta-dni.png" },
           { name: "New solution", steps: 3, highlight: true },
         ],
       },

@@ -14,9 +14,24 @@ export function BenchmarkingSection({
 }) {
   const maxSteps = Math.max(...rows.map((row) => row.steps));
 
+  const competitors = rows.filter((row) => row.logo);
+
   return (
     <div>
       <SectionHeading heading={heading} subheading={subheading} />
+
+      <ul className="mt-4 flex flex-wrap justify-center gap-4 sm:justify-start sm:gap-6">
+        {competitors.map((row) => (
+          <li key={row.name} className="flex flex-col items-center gap-1.5">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={row.logo} alt={row.name} className="h-full w-full object-contain" />
+            </div>
+            <p className="text-xs text-fg-secondary">{row.name}</p>
+          </li>
+        ))}
+      </ul>
+
       <p className="mt-4 text-xs font-medium uppercase tracking-[0.15em] text-fg-secondary">
         {note}
       </p>
