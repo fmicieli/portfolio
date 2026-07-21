@@ -11,9 +11,17 @@ export type FlowStep = { number: string; label: string };
 export type GuideStep = { number: string; title: string; bullets: string[] };
 export type ImpactCard = { title: string; problem: string; solution: string; impact: string };
 export type NextPhase = { title: string; items: string[] };
+export type CaseStudyImage = { src: string; alt: string };
 
 export type CaseStudyBlock =
-  | { type: "hero"; title: string; subtitle: string; meta: CaseStudyMeta[]; tags: string[] }
+  | {
+      type: "hero";
+      title: string;
+      subtitle: string;
+      meta: CaseStudyMeta[];
+      tags: string[];
+      images?: CaseStudyImage[];
+    }
   | {
       type: "problem";
       heading: string;
@@ -77,7 +85,7 @@ export const projects: Project[] = [
     tagline:
       "Simplifying the home screen and transfer flow to improve the mobile banking experience.",
     tags: ["UX Research", "Mobile", "Fintech"],
-    coverImage: null,
+    coverImage: "/projects/bbva-frances/home-screen.png",
     coverAlt: "Screens from the BBVA Francés app redesign",
     behanceUrl: "https://www.behance.net/gallery/243625059/BBVA-Francs-Caso-de-Estudio",
     contentReady: true,
@@ -105,6 +113,11 @@ export const projects: Project[] = [
         title: "BBVA Francés App Redesign",
         subtitle:
           "Simplifying the home screen and transfer flow to improve the mobile banking experience",
+        images: [
+          { src: "/projects/bbva-frances/destination-account.png", alt: "Destination account screen" },
+          { src: "/projects/bbva-frances/home-screen.png", alt: "Redesigned home screen" },
+          { src: "/projects/bbva-frances/transfer-amount.png", alt: "Transfer amount screen" },
+        ],
         meta: [
           { label: "Role", value: "UX/UI Designer" },
           { label: "Duration", value: "10 Days" },
