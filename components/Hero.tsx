@@ -241,7 +241,7 @@ export function Hero() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -60]);
 
-  // "Scroll para explorar" is only useful before the user has actually
+  // "Scroll to explore" is only useful before the user has actually
   // scrolled — gone as soon as the first scroll gesture starts moving
   // things, well before it reaches the mid checkpoint.
   const scrollHintOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
@@ -328,7 +328,7 @@ export function Hero() {
           style={{ opacity: scrollHintOpacity }}
           className="pointer-events-none absolute bottom-8 left-6 text-xs text-fg-secondary sm:left-8"
         >
-          Scroll para explorar
+          Scroll to explore
         </motion.p>
       </div>
     </section>

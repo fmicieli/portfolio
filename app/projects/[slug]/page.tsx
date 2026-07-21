@@ -46,10 +46,10 @@ export default async function ProjectPage({
       <main className="relative mx-auto max-w-3xl px-6 pb-28 pt-32">
         <Reveal>
           <Link
-            href="/#proyectos"
+            href="/#projects"
             className="text-sm text-fg-secondary hover:text-fg"
           >
-            ← Volver a proyectos
+            ← Back to projects
           </Link>
           <h1 className="mt-6 font-display text-3xl font-semibold sm:text-4xl">
             {project.title}
@@ -69,15 +69,15 @@ export default async function ProjectPage({
           </ul>
           {!project.contentReady && (
             <p className="mt-6 rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-fg-secondary">
-              TODO: contenido pendiente — este case study todavía no tiene el
-              contenido e imágenes definitivas.{" "}
+              TODO: content pending — this case study doesn&apos;t have its
+              final content and images yet.{" "}
               <a
                 href={project.behanceUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="underline underline-offset-4 hover:text-fg"
               >
-                Ver mientras tanto en Behance
+                View on Behance in the meantime
               </a>
               .
             </p>

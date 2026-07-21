@@ -4,9 +4,9 @@ import { useSyncExternalStore } from "react";
 
 /**
  * True the instant the fixed header actually starts covering content: once
- * #hero's bottom edge (and everything pinned inside it, including the "TODO:
- * título sección" reveal) has scrolled up to meet the header's own bottom
- * edge. Before that, the hero fills the full viewport behind the header and
+ * #hero's bottom edge (and everything pinned inside it, including the
+ * "About me" reveal) has scrolled up to meet the header's own bottom edge.
+ * Before that, the hero fills the full viewport behind the header and
  * nothing is really "underneath" it yet, so the background stays off.
  */
 function subscribe(callback: () => void) {

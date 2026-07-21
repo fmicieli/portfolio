@@ -1,6 +1,6 @@
 export function About() {
-  // TODO: contenido "sobre mí" pendiente. El testimonio + cards que vivían
-  // acá ahora se muestran dentro del scroll pineado del Hero; este anchor
-  // queda para el link "Sobre mí" del nav.
-  return <section id="sobre-mi" />;
+  // TODO: "about me" content pending. The testimonial + cards that used to
+  // live here now render inside the Hero's pinned scroll; this anchor stays
+  // for the nav's "About" link.
+  return <section id="about" />;
 }

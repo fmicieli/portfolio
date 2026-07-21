@@ -13,10 +13,10 @@ export type Project = {
   behanceUrl: string;
   contentReady: boolean;
   sections: {
-    contexto: CaseStudySection;
-    proceso: CaseStudySection;
-    decisiones: CaseStudySection;
-    resultado: CaseStudySection;
+    context: CaseStudySection;
+    process: CaseStudySection;
+    decisions: CaseStudySection;
+    result: CaseStudySection;
   };
 };
 
@@ -25,77 +25,77 @@ export const projects: Project[] = [
     slug: "bbva-frances",
     title: "BBVA Francés",
     tagline:
-      "Rediseño no solicitado del home y el flujo de transferencias de la app de BBVA Argentina.",
+      "Unsolicited redesign of the BBVA Argentina app's home and transfer flow.",
     tags: ["UX Research", "Mobile", "Fintech"],
     coverImage: null,
-    coverAlt: "Pantallas del rediseño de la app de BBVA Francés",
+    coverAlt: "Screens from the BBVA Francés app redesign",
     behanceUrl: "https://www.behance.net/gallery/243625059/BBVA-Francs-Caso-de-Estudio",
     contentReady: true,
     sections: {
-      contexto: {
-        heading: "Contexto y problema",
-        body: "La app de BBVA Argentina resolvía una transferencia en 6 pasos, con información dispersa en el home y fricción para encontrar las acciones más frecuentes. El proyecto fue un rediseño no solicitado (unsolicited redesign): un ejercicio propio para explorar cómo simplificar el flujo sin acceso al equipo de producto real, partiendo de research heurístico sobre la app publicada.",
+      context: {
+        heading: "Context & problem",
+        body: "The BBVA Argentina app resolved a transfer in 6 steps, with information scattered across the home screen and friction finding the most frequent actions. This was an unsolicited redesign: a self-directed exercise exploring how to simplify the flow without access to the real product team, starting from heuristic research on the published app.",
       },
-      proceso: {
-        heading: "Proceso",
-        body: "Evaluación heurística (Nielsen) de la app actual, mapeo del flujo de transferencias paso a paso, identificación de puntos de fricción y re-priorización de la información del home según frecuencia de uso real reportada por usuarios en research previo.",
+      process: {
+        heading: "Process",
+        body: "A heuristic (Nielsen) evaluation of the current app, step-by-step mapping of the transfer flow, identifying friction points, and re-prioritizing home screen information based on actual usage frequency reported by users in prior research.",
       },
-      decisiones: {
-        heading: "Decisiones clave",
-        body: "Se consolidaron pasos redundantes de confirmación, se adelantó la selección de cuenta destino al primer paso, y se rediseñó el home para priorizar accesos directos a transferencias sobre contenido promocional.",
+      decisions: {
+        heading: "Key decisions",
+        body: "Consolidated redundant confirmation steps, moved destination account selection up to the first step, and redesigned the home screen to prioritize direct transfer shortcuts over promotional content.",
       },
-      resultado: {
-        heading: "Resultado",
-        body: "El flujo de transferencias se redujo de 6 a 3 pasos, manteniendo las validaciones de seguridad necesarias pero eliminando fricción innecesaria en la navegación.",
+      result: {
+        heading: "Result",
+        body: "The transfer flow went from 6 steps to 3, keeping the necessary security validations while removing unnecessary navigation friction.",
       },
     },
   },
   {
     slug: "tribu-music",
     title: "Tribu Music",
-    tagline: "Caso de estudio de diseño de producto para una plataforma musical.",
+    tagline: "Product design case study for a music platform.",
     tags: ["Product Design", "UI"],
     coverImage: null,
-    coverAlt: "Pantallas del proyecto Tribu Music",
+    coverAlt: "Screens from the Tribu Music project",
     behanceUrl: "https://www.behance.net/gallery/241107187/Tribu-Music-Caso-de-estudio",
     contentReady: false,
     sections: {
-      contexto: { heading: "Contexto y problema", body: "TODO: contenido pendiente" },
-      proceso: { heading: "Proceso", body: "TODO: contenido pendiente" },
-      decisiones: { heading: "Decisiones clave", body: "TODO: contenido pendiente" },
-      resultado: { heading: "Resultado", body: "TODO: contenido pendiente" },
+      context: { heading: "Context & problem", body: "TODO: content pending" },
+      process: { heading: "Process", body: "TODO: content pending" },
+      decisions: { heading: "Key decisions", body: "TODO: content pending" },
+      result: { heading: "Result", body: "TODO: content pending" },
     },
   },
   {
     slug: "out",
-    title: "Diseño de sección para OUT",
-    tagline: "Diseño de una sección de producto para OUT.",
+    title: "Section design for OUT",
+    tagline: "Design of a product section for OUT.",
     tags: ["UI", "Design System"],
     coverImage: null,
-    coverAlt: "Pantallas del proyecto OUT",
+    coverAlt: "Screens from the OUT project",
     behanceUrl: "https://www.behance.net/gallery/230515938/Diseno-de-seccion-para-OUT",
     contentReady: false,
     sections: {
-      contexto: { heading: "Contexto y problema", body: "TODO: contenido pendiente" },
-      proceso: { heading: "Proceso", body: "TODO: contenido pendiente" },
-      decisiones: { heading: "Decisiones clave", body: "TODO: contenido pendiente" },
-      resultado: { heading: "Resultado", body: "TODO: contenido pendiente" },
+      context: { heading: "Context & problem", body: "TODO: content pending" },
+      process: { heading: "Process", body: "TODO: content pending" },
+      decisions: { heading: "Key decisions", body: "TODO: content pending" },
+      result: { heading: "Result", body: "TODO: content pending" },
     },
   },
   {
     slug: "medife-research",
     title: "Medifé Research",
-    tagline: "Caso de estudio de research para Medifé.",
+    tagline: "Research case study for Medifé.",
     tags: ["UX Research", "Healthcare"],
     coverImage: null,
-    coverAlt: "Material de research del proyecto Medifé",
+    coverAlt: "Research material from the Medifé project",
     behanceUrl: "https://www.behance.net/gallery/225357747/Medif-Research-Caso-de-estudio",
     contentReady: false,
     sections: {
-      contexto: { heading: "Contexto y problema", body: "TODO: contenido pendiente" },
-      proceso: { heading: "Proceso", body: "TODO: contenido pendiente" },
-      decisiones: { heading: "Decisiones clave", body: "TODO: contenido pendiente" },
-      resultado: { heading: "Resultado", body: "TODO: contenido pendiente" },
+      context: { heading: "Context & problem", body: "TODO: content pending" },
+      process: { heading: "Process", body: "TODO: content pending" },
+      decisions: { heading: "Key decisions", body: "TODO: content pending" },
+      result: { heading: "Result", body: "TODO: content pending" },
     },
   },
 ];

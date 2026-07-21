@@ -29,7 +29,7 @@ export function CaseStudySection({
             <img src={imageSrc} alt={imageAlt ?? ""} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-center text-xs text-fg-secondary">
-              TODO: imagen pendiente
+              TODO: image pending
             </div>
           )}
         </div>

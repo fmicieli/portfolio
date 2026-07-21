@@ -18,7 +18,7 @@ const inter = Inter({
 const siteUrl = "https://florenciamicieli.com.ar";
 const title = "Florencia Micieli — UX/UI Designer · Product Design";
 const description =
-  "3+ años diseñando productos B2B y SaaS. Sistemas de diseño, prototipos de alta fidelidad y un flujo potenciado por IA generativa para explorar, documentar y construir interfaces de forma autónoma.";
+  "3+ years designing B2B and SaaS products. Design systems, high-fidelity prototypes, and a workflow powered by generative AI to explore, document, and build interfaces independently.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     description,
     url: siteUrl,
     siteName: "Florencia Micieli",
-    locale: "es_AR",
+    locale: "en_US",
     type: "website",
   },
   icons: {
@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} antialiased bg-bg text-fg`}
       >

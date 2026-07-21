@@ -4,7 +4,7 @@ import type { Project } from "@/data/projects";
 export function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
-      href={`/proyectos/${project.slug}`}
+      href={`/projects/${project.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-white/10 transition-transform hover:-translate-y-1 hover:scale-[1.01]"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-white/5">
@@ -19,9 +19,9 @@ export function ProjectCard({ project }: { project: Project }) {
           <div
             className="flex h-full w-full items-center justify-center text-center text-xs text-fg-secondary"
             role="img"
-            aria-label={`${project.coverAlt} — imagen pendiente de reemplazo`}
+            aria-label={`${project.coverAlt} — image pending replacement`}
           >
-            TODO: imagen pendiente
+            TODO: image pending
           </div>
         )}
       </div>
