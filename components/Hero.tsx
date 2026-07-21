@@ -261,7 +261,7 @@ export function Hero() {
       style={{ height: `${TRANSITION_HEIGHT_VH}vh` }}
     >
       <div
-        className="sticky overflow-hidden px-6"
+        className="sticky overflow-hidden px-3"
         style={{ top: headerClearance, height: `calc(100vh - ${headerClearance}px)` }}
         onMouseMove={handleMouseMove}
       >
@@ -281,12 +281,12 @@ export function Hero() {
           tiltY={logoTiltY}
         />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
           <motion.div
             style={{ opacity: heroOpacity, y: heroY, willChange: "opacity, transform" }}
             className="relative max-w-3xl"
           >
-            <p className="mb-4 text-sm uppercase tracking-[0.2em] text-fg-secondary">
+            <p className="mb-2 text-sm uppercase tracking-[0.2em] text-fg-secondary">
               Florencia Micieli
             </p>
             <h1 className="whitespace-nowrap font-display text-xl font-semibold leading-tight sm:text-4xl lg:text-6xl">
@@ -295,7 +295,7 @@ export function Hero() {
             <button
               type="button"
               onClick={handleCtaClick}
-              className="mt-10 inline-flex items-center rounded-full bg-fg px-8 py-3 text-sm font-medium text-bg transition hover:scale-[1.03] hover:bg-accent-light"
+              className="mt-5 inline-flex items-center rounded-full bg-fg px-4 py-1.5 text-sm font-medium text-bg transition hover:scale-[1.03] hover:bg-accent-light"
             >
               View more
             </button>
@@ -306,13 +306,13 @@ export function Hero() {
             the whole group is vertically centered as one block within the
             pinned viewport once settled — not bottom-anchored, which left
             all the leftover space stacked above it instead of split evenly. */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-12 overflow-hidden px-6 text-center">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden px-3 text-center">
           <motion.div
             style={{ opacity: headingOpacity, y: headingY, willChange: "opacity, transform" }}
-            className="relative mx-auto max-w-2xl px-6"
+            className="relative mx-auto max-w-2xl px-3"
           >
             <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">About me</h2>
-            <p className="mt-4 leading-relaxed text-fg-secondary">
+            <p className="mt-2 leading-relaxed text-fg-secondary">
               3+ years designing digital products for B2B and SaaS environments. Design
               systems, high-fidelity prototypes, and a workflow enhanced by generative AI
               to explore, document, and build interfaces independently.
@@ -326,7 +326,7 @@ export function Hero() {
 
         <motion.p
           style={{ opacity: scrollHintOpacity }}
-          className="pointer-events-none absolute bottom-8 left-6 text-xs text-fg-secondary sm:left-8"
+          className="pointer-events-none absolute bottom-4 left-3 text-xs text-fg-secondary sm:left-4"
         >
           Scroll to explore
         </motion.p>

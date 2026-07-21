@@ -28,7 +28,7 @@ const skills = [
 // Narrower and taller than the previous grid version so all four fit in one
 // row: 4 * 280 + 3 * 40 = 1240px, comfortably inside common desktop widths.
 const CARD_WIDTH = 280;
-const CARD_GAP = 40;
+const CARD_GAP = 20;
 const CARD_STEP = CARD_WIDTH + CARD_GAP;
 const CARD_HEIGHT = 300;
 
@@ -48,11 +48,11 @@ function CardContent({ item }: { item: (typeof skills)[number] }) {
     <>
       <h3 className="font-display text-lg font-semibold text-fg">{item.title}</h3>
       <p className="text-sm leading-relaxed text-fg-secondary">{item.text}</p>
-      <div className="mt-auto flex flex-wrap gap-2">
+      <div className="mt-auto flex flex-wrap gap-1">
         {item.tags.map((tag) => (
           <span
             key={tag}
-            className="rounded-full border border-white bg-white/20 px-3 py-1 text-xs text-white"
+            className="rounded-full border border-white bg-white/20 px-1.5 py-0.5 text-xs text-white"
           >
             {tag}
           </span>
@@ -63,7 +63,7 @@ function CardContent({ item }: { item: (typeof skills)[number] }) {
 }
 
 const CARD_STYLE =
-  "flex flex-col gap-3 rounded-xl border border-white/10 bg-white/10 p-5 backdrop-blur-md";
+  "flex flex-col gap-1.5 rounded-xl border border-white/10 bg-white/10 p-2.5 backdrop-blur-md";
 
 /**
  * Desktop/tablet only: the four cards start tightly overlapped and fanned —
@@ -139,7 +139,7 @@ function StackedGrid({ progress }: { progress: MotionValue<number> }) {
   const opacity = useTransform(progress, [0, 0.4], [0, 1]);
 
   return (
-    <div className="mx-auto grid max-w-4xl grid-cols-2 gap-3 px-6 sm:hidden">
+    <div className="mx-auto grid max-w-4xl grid-cols-2 gap-1.5 px-3 sm:hidden">
       {skills.map((item) => (
         <motion.div key={item.title} style={{ opacity, y }} className={CARD_STYLE}>
           <CardContent item={item} />

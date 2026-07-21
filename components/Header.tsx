@@ -20,9 +20,9 @@ export function Header() {
           make that cut read as an intentional header surface rather than
           content just vanishing mid-scroll. */}
       <div aria-hidden="true" className="absolute inset-0 bg-bg" />
-      <div className="relative mx-auto max-w-5xl px-4 pt-4 sm:px-6">
-        <div className="relative flex items-center justify-center px-4 py-3 sm:px-6">
-          <nav className="hidden items-center gap-8 sm:flex" aria-label="Main navigation">
+      <div className="relative mx-auto max-w-5xl px-2 pt-2 sm:px-3">
+        <div className="relative flex items-center justify-center px-2 py-1.5 sm:px-3">
+          <nav className="hidden items-center gap-4 sm:flex" aria-label="Main navigation">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
@@ -36,7 +36,7 @@ export function Header() {
 
           <button
             type="button"
-            className="absolute right-4 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-fg sm:hidden"
+            className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-fg sm:hidden"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
@@ -72,14 +72,14 @@ export function Header() {
             onClick={() => setOpen(false)}
           />
           <nav
-            className="relative mx-4 mt-2 flex flex-col gap-1 rounded-xl border border-white/10 bg-[rgba(21,10,19,0.97)] p-2 shadow-xl backdrop-blur-md sm:hidden"
+            className="relative mx-2 mt-1 flex flex-col gap-1 rounded-xl border border-white/10 bg-[rgba(21,10,19,0.97)] p-1 shadow-xl backdrop-blur-md sm:hidden"
             aria-label="Mobile navigation"
           >
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition-colors hover:bg-white/5 hover:text-fg"
+                className="rounded-lg px-1.5 py-1 text-sm text-fg-secondary transition-colors hover:bg-white/5 hover:text-fg"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
