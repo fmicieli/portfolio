@@ -20,9 +20,9 @@ export function BenchmarkingSection({
     <div>
       <SectionHeading heading={heading} subheading={subheading} />
 
-      <ul className="mt-4 flex flex-wrap justify-center gap-4 sm:justify-start sm:gap-6">
+      <ul className="mt-6 flex flex-wrap justify-center gap-6 sm:justify-start sm:gap-8">
         {competitors.map((row) => (
-          <li key={row.name} className="flex flex-col items-center gap-1.5">
+          <li key={row.name} className="flex flex-col items-center gap-2">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={row.logo} alt={row.name} className="h-full w-full object-contain" />
@@ -32,12 +32,12 @@ export function BenchmarkingSection({
         ))}
       </ul>
 
-      <p className="mt-4 text-xs font-medium uppercase tracking-[0.15em] text-fg-secondary">
+      <p className="mt-6 text-xs font-medium uppercase tracking-[0.15em] text-fg-secondary">
         {note}
       </p>
-      <ul className="mt-2 flex flex-col gap-1.5">
+      <ul className="mt-3 flex flex-col gap-2.5">
         {rows.map((row) => (
-          <li key={row.name} className="flex items-center gap-2">
+          <li key={row.name} className="flex items-center gap-3">
             <p className="w-32 shrink-0 text-sm text-fg-secondary sm:w-40">{row.name}</p>
             <div className="relative h-8 flex-1 overflow-hidden rounded-full bg-white/5">
               <div

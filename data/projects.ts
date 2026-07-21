@@ -48,6 +48,7 @@ export type CaseStudyBlock =
       subheading: string;
       points: SolutionPoint[];
       annotations: string[];
+      image?: CaseStudyImage;
     }
   | {
       type: "flow-comparison";
@@ -194,6 +195,10 @@ export const projects: Project[] = [
           "Prioritized shortcuts: most-used front and center",
           "QR in the FAB for instant payments",
         ],
+        image: {
+          src: "/projects/bbva-frances/home-screen.png",
+          alt: "Redesigned home screen",
+        },
       },
       {
         type: "flow-comparison",

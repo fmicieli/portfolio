@@ -13,15 +13,15 @@ export function CaseStudySection({
   reverse?: boolean;
 }) {
   return (
-    <Reveal className="py-7">
+    <Reveal className="py-10">
       <div
-        className={`grid items-center gap-4 sm:grid-cols-2 ${
+        className={`grid items-center gap-6 sm:grid-cols-2 ${
           reverse ? "sm:[&>*:first-child]:order-2" : ""
         }`}
       >
         <div>
           <h2 className="text-xl font-semibold">{section.heading}</h2>
-          <p className="mt-2 leading-relaxed text-fg-secondary">{section.body}</p>
+          <p className="mt-3 leading-relaxed text-fg-secondary">{section.body}</p>
         </div>
         <div className="aspect-[4/3] w-full overflow-hidden rounded-xl border border-white/10 bg-white/5">
           {imageSrc ? (

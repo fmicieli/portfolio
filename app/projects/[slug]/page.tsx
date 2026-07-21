@@ -45,7 +45,7 @@ export default async function ProjectPage({
     <>
       <Header />
       <main
-        className={`relative mx-auto px-1.5 pb-14 pt-16 ${
+        className={`relative mx-auto px-4 pb-20 pt-20 ${
           project.caseStudyBlocks ? "max-w-4xl" : "max-w-3xl"
         }`}
       >
@@ -56,15 +56,15 @@ export default async function ProjectPage({
 
           {!project.caseStudyBlocks && (
             <>
-              <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl">
+              <h1 className="mt-6 font-display text-3xl font-semibold sm:text-4xl">
                 {project.title}
               </h1>
-              <p className="mt-2 max-w-xl leading-relaxed text-fg-secondary">{project.tagline}</p>
-              <ul className="mt-2 flex flex-wrap gap-1">
+              <p className="mt-3 max-w-xl leading-relaxed text-fg-secondary">{project.tagline}</p>
+              <ul className="mt-3 flex flex-wrap gap-2">
                 {project.tags.map((tag) => (
                   <li
                     key={tag}
-                    className="rounded-full border border-white/10 px-1.5 py-0.5 text-xs text-fg-secondary"
+                    className="rounded-full border border-white/10 px-3 py-1 text-xs text-fg-secondary"
                   >
                     {tag}
                   </li>
@@ -74,7 +74,7 @@ export default async function ProjectPage({
           )}
 
           {!project.contentReady && (
-            <p className="mt-3 rounded-lg border border-accent/30 bg-accent/10 px-2 py-1.5 text-sm text-fg-secondary">
+            <p className="mt-4 rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-fg-secondary">
               TODO: content pending — this case study doesn&apos;t have its
               final content and images yet.{" "}
               <a
@@ -91,11 +91,11 @@ export default async function ProjectPage({
         </Reveal>
 
         {project.caseStudyBlocks ? (
-          <div className="mt-4">
+          <div className="mt-8">
             <CaseStudyBlocks blocks={project.caseStudyBlocks} />
           </div>
         ) : (
-          <div className="mt-2 divide-y divide-white/10">
+          <div className="mt-4 divide-y divide-white/10">
             {sections.map((section, i) => (
               <CaseStudySection key={section.heading} section={section} reverse={i % 2 === 1} />
             ))}
