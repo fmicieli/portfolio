@@ -40,11 +40,12 @@ export function SolutionSection({
         </ul>
 
         {hasVisual ? (
-          // Mockup on one side, its callouts stacked beside it — the
-          // Figma original connects these with pointer lines, which
-          // doesn't translate cleanly outside Figma, so this keeps the
-          // same "image + its annotations" pairing as plain cards instead.
-          <div className="flex items-center justify-center gap-4">
+          // Mockup on top, its callouts wrapped below it — the Figma
+          // original connects these with pointer lines, which doesn't
+          // translate cleanly outside Figma, and a full-size phone mockup
+          // doesn't leave room for a text sidebar next to it, so this
+          // stacks them instead of splitting the column horizontally.
+          <div className="flex flex-col items-center justify-center gap-4">
             {phoneDemo ? (
               <PhoneScrollDemo
                 frameSrc={phoneDemo.frameSrc}
@@ -61,7 +62,7 @@ export function SolutionSection({
                 />
               )
             )}
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-wrap justify-center gap-2">
               {annotations.map((annotation) => (
                 <li
                   key={annotation}

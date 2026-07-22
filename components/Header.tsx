@@ -21,7 +21,7 @@ export function Header() {
           content just vanishing mid-scroll. */}
       <div aria-hidden="true" className="absolute inset-0 bg-bg" />
       <div className="relative px-[15vw] pt-2">
-        <div className="relative flex items-center justify-center py-1.5">
+        <div className="relative flex min-h-11 items-center justify-center py-1.5">
           <nav className="hidden items-center gap-4 sm:flex" aria-label="Main navigation">
             {NAV_LINKS.map((link) => (
               <a
@@ -33,34 +33,39 @@ export function Header() {
               </a>
             ))}
           </nav>
-
-          <button
-            type="button"
-            className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-fg sm:hidden"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              {open ? (
-                <path
-                  d="M4 4L16 16M16 4L4 16"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              ) : (
-                <path
-                  d="M3 6H17M3 10H17M3 14H17"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              )}
-            </svg>
-          </button>
         </div>
       </div>
+
+      {/* Sits outside the 15vw content margin on purpose — a tap target
+          like this should hug the real screen edge at any viewport size,
+          not get pushed in by the same margin that centers the logo/nav
+          text (15vw of a narrow phone screen is already a lot of the
+          available width). */}
+      <button
+        type="button"
+        className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-fg sm:hidden"
+        aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          {open ? (
+            <path
+              d="M4 4L16 16M16 4L4 16"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          ) : (
+            <path
+              d="M3 6H17M3 10H17M3 14H17"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          )}
+        </svg>
+      </button>
 
       {open && (
         <>
