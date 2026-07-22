@@ -21,9 +21,14 @@ export function PhoneScrollDemo({
 }) {
   return (
     <div className="relative mx-auto w-64" style={{ aspectRatio: "877 / 1783" }}>
+      {/* Height padded a couple points past the measured cutout (73.25%) so
+          the scrolling image always overlaps the frame's bottom edge with
+          margin for error — any excess simply hides behind the opaque bezel
+          drawn on top, rather than leaving a sliver of page background
+          showing through if the fit were ever a pixel short. */}
       <div
-        className="absolute overflow-hidden rounded-[10%]"
-        style={{ left: "5.25%", top: "13.01%", width: "89.51%", height: "73.25%" }}
+        className="absolute overflow-hidden rounded-none"
+        style={{ left: "5.25%", top: "13.01%", width: "89.51%", height: "76%" }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

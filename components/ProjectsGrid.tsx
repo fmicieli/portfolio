@@ -8,7 +8,7 @@ export function ProjectsGrid() {
       <Reveal>
         <h2 className="text-2xl font-semibold">Featured projects</h2>
       </Reveal>
-      <div className="mt-5 grid gap-[7.5vw] sm:grid-cols-2">
+      <div className="mt-5 grid gap-[5vw] sm:grid-cols-2">
         {projects.map((project, i) => (
           <Reveal key={project.slug} delay={i * 0.05}>
             <ProjectCard project={project} />

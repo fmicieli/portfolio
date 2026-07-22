@@ -44,11 +44,7 @@ export default async function ProjectPage({
   return (
     <>
       <Header />
-      <main
-        className={`relative mx-auto px-4 pb-20 pt-20 ${
-          project.caseStudyBlocks ? "max-w-4xl" : "max-w-3xl"
-        }`}
-      >
+      <main className="relative px-[15vw] pb-20 pt-20">
         <Reveal>
           <Link href="/#projects" className="text-sm text-fg-secondary hover:text-fg">
             ← Back to projects
