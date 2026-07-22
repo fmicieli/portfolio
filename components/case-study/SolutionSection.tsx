@@ -1,5 +1,6 @@
 import type { CaseStudyImage, SolutionPoint } from "@/data/projects";
 import { SectionHeading } from "@/components/case-study/SectionHeading";
+import { PhoneScrollDemo } from "@/components/case-study/PhoneScrollDemo";
 
 export function SolutionSection({
   heading,
@@ -7,17 +8,21 @@ export function SolutionSection({
   points,
   annotations,
   image,
+  phoneDemo,
 }: {
   heading: string;
   subheading: string;
   points: SolutionPoint[];
   annotations: string[];
   image?: CaseStudyImage;
+  phoneDemo?: { frameSrc: string; frameAlt: string; scrollSrc: string };
 }) {
+  const hasVisual = Boolean(image || phoneDemo);
+
   return (
     <div>
       <SectionHeading heading={heading} subheading={subheading} />
-      <div className={image ? "mt-6 grid gap-8 sm:grid-cols-2 sm:items-center" : "mt-6"}>
+      <div className={hasVisual ? "mt-6 grid gap-8 sm:grid-cols-2 sm:items-center" : "mt-6"}>
         <ul className="flex flex-col gap-5">
           {points.map((point) => (
             <li key={point.number} className="flex gap-3">
@@ -34,18 +39,28 @@ export function SolutionSection({
           ))}
         </ul>
 
-        {image ? (
+        {hasVisual ? (
           // Mockup on one side, its callouts stacked beside it — the
           // Figma original connects these with pointer lines, which
           // doesn't translate cleanly outside Figma, so this keeps the
           // same "image + its annotations" pairing as plain cards instead.
           <div className="flex items-center justify-center gap-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={image.src}
-              alt={image.alt}
-              className="w-32 shrink-0 rounded-2xl border border-white/10 shadow-xl shadow-black/30 sm:w-40"
-            />
+            {phoneDemo ? (
+              <PhoneScrollDemo
+                frameSrc={phoneDemo.frameSrc}
+                frameAlt={phoneDemo.frameAlt}
+                scrollSrc={phoneDemo.scrollSrc}
+              />
+            ) : (
+              image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-32 shrink-0 rounded-2xl border border-white/10 shadow-xl shadow-black/30 sm:w-40"
+                />
+              )
+            )}
             <ul className="flex flex-col gap-2">
               {annotations.map((annotation) => (
                 <li

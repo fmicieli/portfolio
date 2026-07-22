@@ -60,6 +60,7 @@ export function CaseStudyBlocks({ blocks }: { blocks: CaseStudyBlock[] }) {
                 points={block.points}
                 annotations={block.annotations}
                 image={block.image}
+                phoneDemo={block.phoneDemo}
               />
             )}
             {block.type === "flow-comparison" && (

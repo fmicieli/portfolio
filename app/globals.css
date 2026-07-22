@@ -45,6 +45,27 @@ h1, h2, h3, h4 {
     border-color 300ms ease;
 }
 
+/* Slow auto-scroll for the phone mockup demo in the case study's Solution
+   section: the tall content image pans up through the phone frame's
+   transparent cutout, pauses at each end, then reverses — looks like someone
+   scrolling through the screen. -53.26% (not -100%) because that's how much
+   of the image's own height needs to travel for its bottom edge to reach the
+   bottom of the visible cutout: cutout height is 1306px, content is
+   displayed at 786px wide (2x its 393px natural width to match the cutout),
+   so its displayed height is 1397*2=2794px, and 1306/2794 = 46.74% of that
+   is already visible at rest — only the remaining 53.26% needs to travel. */
+@keyframes phone-scroll {
+  0%, 8% {
+    transform: translateY(0%);
+  }
+  45%, 58% {
+    transform: translateY(-53.26%);
+  }
+  92%, 100% {
+    transform: translateY(0%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
