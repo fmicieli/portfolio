@@ -55,14 +55,36 @@ h1, h2, h3, h4 {
    so its displayed height is 1397*2=2794px, and 1306/2794 = 46.74% of that
    is already visible at rest — only the remaining 53.26% needs to travel. */
 @keyframes phone-scroll {
-  0%, 8% {
+  0%, 38% {
     transform: translateY(0%);
   }
-  45%, 58% {
-    transform: translateY(-53.26%);
+  44%, 60% {
+    transform: translateY(-19%);
   }
-  92%, 100% {
+  66%, 82% {
+    transform: translateY(-51.75%);
+  }
+  94%, 100% {
     transform: translateY(0%);
+  }
+}
+
+/* The three annotation callouts (each an arrow + text box, pointing at a
+   fixed spot on the phone) fade in and out together, in lockstep with the
+   phone-scroll keyframe above (same 16s cycle): all three sit on screen
+   together during the initial 6s pause (0-38%, before any scrolling
+   starts), then fade out together right as the auto-scroll kicks in, and
+   stay hidden through the rest of the loop until it settles back at the
+   top for the next cycle. */
+@keyframes annotation-group-fade {
+  0%, 34% {
+    opacity: 1;
+  }
+  40%, 96% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 

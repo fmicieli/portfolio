@@ -34,8 +34,24 @@ export function ProblemSection({
         {Array.from({ length: rows }, (_, i) => (
           <Fragment key={i}>
             {quotes[i] && (
-              <div className="flex items-center rounded-xl border border-white/10 bg-white/5 p-4 text-sm leading-relaxed text-fg-secondary">
-                &ldquo;{quotes[i]}&rdquo;
+              <div className="flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm leading-relaxed text-fg-secondary">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                    className="h-7 w-7 text-fg-secondary"
+                  >
+                    <circle cx="12" cy="8" r="4" fill="currentColor" />
+                    <path
+                      d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>
+                <p>&ldquo;{quotes[i]}&rdquo;</p>
               </div>
             )}
             {stats[i] && (

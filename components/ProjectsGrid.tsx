@@ -4,11 +4,11 @@ import { Reveal } from "@/components/Reveal";
 
 export function ProjectsGrid() {
   return (
-    <section id="projects" className="relative px-[15vw] py-14">
+    <section id="projects" className="relative px-[10vw] py-14">
       <Reveal>
         <h2 className="text-2xl font-semibold">Featured projects</h2>
       </Reveal>
-      <div className="mt-5 grid gap-[5vw] sm:grid-cols-2">
+      <div className="mt-5 grid gap-8 sm:grid-cols-2">
         {projects.map((project, i) => (
           <Reveal key={project.slug} delay={i * 0.05}>
             <ProjectCard project={project} />

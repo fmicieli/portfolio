@@ -1,5 +1,6 @@
 import type { GuideStep } from "@/data/projects";
 import { SectionHeading } from "@/components/case-study/SectionHeading";
+import { ImagePlaceholder } from "@/components/case-study/ImagePlaceholder";
 
 export function StepGuideSection({
   heading,
@@ -22,13 +23,30 @@ export function StepGuideSection({
               </span>
               <p className="font-medium text-fg">{step.title}</p>
             </div>
-            <ul className="mt-4 flex flex-col gap-2">
-              {step.bullets.map((bullet) => (
-                <li key={bullet} className="text-sm leading-relaxed text-fg-secondary">
-                  {bullet}
-                </li>
-              ))}
-            </ul>
+            <div className="mt-4 flex gap-4">
+              <ul className="flex flex-1 flex-col gap-2">
+                {step.bullets.map((bullet) => (
+                  <li key={bullet} className="text-sm leading-relaxed text-fg-secondary">
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex shrink-0 gap-2">
+                {step.images.map((image, i) =>
+                  "placeholder" in image ? (
+                    <ImagePlaceholder key={i} spec={image.placeholder} />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={i}
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-[90px] rounded-lg shadow-lg shadow-black/30"
+                    />
+                  ),
+                )}
+              </div>
+            </div>
           </li>
         ))}
       </ul>

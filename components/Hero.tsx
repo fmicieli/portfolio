@@ -261,7 +261,7 @@ export function Hero() {
       style={{ height: `${TRANSITION_HEIGHT_VH}vh` }}
     >
       <div
-        className="sticky overflow-hidden px-[15vw]"
+        className="sticky overflow-hidden px-[10vw]"
         style={{ top: headerClearance, height: `calc(100vh - ${headerClearance}px)` }}
         onMouseMove={handleMouseMove}
       >
@@ -281,7 +281,7 @@ export function Hero() {
           tiltY={logoTiltY}
         />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-[15vw] text-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-[10vw] text-center">
           <motion.div
             style={{ opacity: heroOpacity, y: heroY, willChange: "opacity, transform" }}
             className="relative max-w-3xl"
@@ -306,7 +306,7 @@ export function Hero() {
             the whole group is vertically centered as one block within the
             pinned viewport once settled — not bottom-anchored, which left
             all the leftover space stacked above it instead of split evenly. */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden px-[15vw] text-center">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden px-[10vw] text-center">
           <motion.div
             style={{ opacity: headingOpacity, y: headingY, willChange: "opacity, transform" }}
             className="relative mx-auto max-w-2xl"

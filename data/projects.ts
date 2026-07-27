@@ -13,7 +13,13 @@ export type BenchmarkRow = {
 };
 export type SolutionPoint = { number: string; title: string; description: string };
 export type FlowStep = { number: string; label: string };
-export type GuideStep = { number: string; title: string; bullets: string[] };
+export type GuideStepImage = CaseStudyImage | { placeholder: string };
+export type GuideStep = {
+  number: string;
+  title: string;
+  bullets: string[];
+  images: GuideStepImage[];
+};
 export type ImpactCard = { title: string; problem: string; solution: string; impact: string };
 export type NextPhase = { title: string; items: string[] };
 export type CaseStudyImage = { src: string; alt: string };
@@ -240,6 +246,10 @@ export const projects: Project[] = [
               "Recent contacts visible",
               "Automatic validation",
             ],
+            images: [
+              { src: "/projects/bbva-frances/destination-account.png", alt: "Recipient screen, empty state with recent contacts" },
+              { placeholder: "Recipient screen, filled state: alias/CBU/CVU entered and validated" },
+            ],
           },
           {
             number: "2",
@@ -248,6 +258,9 @@ export const projects: Project[] = [
               "Name and bank validated",
               "Shows full CBU and CUIT",
               "Option to save contact",
+            ],
+            images: [
+              { placeholder: "Data confirmation screen: recipient name + bank validated, full CBU and CUIT, \"save contact\" option" },
             ],
           },
           {
@@ -258,6 +271,9 @@ export const projects: Project[] = [
               "Source account selection",
               "Confirm transfer button",
             ],
+            images: [
+              { src: "/projects/bbva-frances/transfer-amount.png", alt: "Transfer amount screen with numeric keypad and source account selection" },
+            ],
           },
           {
             number: "4",
@@ -266,6 +282,9 @@ export const projects: Project[] = [
               "Clear visual status",
               "Receipt available",
               "Operation number, date, and time visible",
+            ],
+            images: [
+              { placeholder: "Success screen: confirmation status, receipt, operation number, date and time" },
             ],
           },
         ],

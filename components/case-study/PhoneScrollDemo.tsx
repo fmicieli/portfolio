@@ -20,7 +20,7 @@ export function PhoneScrollDemo({
   scrollSrc: string;
 }) {
   return (
-    <div className="relative mx-auto w-[333px] max-w-full" style={{ aspectRatio: "877 / 1783" }}>
+    <div className="relative mx-auto w-[300px] max-w-full shrink-0" style={{ aspectRatio: "877 / 1783" }}>
       {/* Height padded a couple points past the measured cutout (73.25%) so
           the scrolling image always overlaps the frame's bottom edge with
           margin for error — any excess simply hides behind the opaque bezel

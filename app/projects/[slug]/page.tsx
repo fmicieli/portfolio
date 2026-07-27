@@ -44,7 +44,7 @@ export default async function ProjectPage({
   return (
     <>
       <Header />
-      <main className="relative px-[15vw] pb-20 pt-20">
+      <main className="relative px-[10vw] pb-20 pt-20">
         <Reveal>
           <Link href="/#projects" className="text-sm text-fg-secondary hover:text-fg">
             ← Back to projects

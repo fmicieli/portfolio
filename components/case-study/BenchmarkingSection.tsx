@@ -27,7 +27,7 @@ export function BenchmarkingSection({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={row.logo} alt={row.name} className="h-full w-full object-contain" />
             </div>
-            <p className="text-xs text-fg-secondary">{row.name}</p>
+            <p className="text-sm text-fg-secondary">{row.name}</p>
           </li>
         ))}
       </ul>
