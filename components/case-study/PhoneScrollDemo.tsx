@@ -1,3 +1,14 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useInView } from "framer-motion";
+
+// How long after the phone scrolls into view before its auto-scroll starts
+// — long enough for Solution's text points (staggered reveal, ~0.74s to
+// settle) to finish appearing first, so it reads as "text, then scroll"
+// instead of both happening at once.
+const START_DELAY_MS = 900;
+
 /**
  * Composites a phone frame (with a transparent cutout where its screen
  * should be) over a tall screenshot of everything that screen would show if
@@ -9,6 +20,12 @@
  * scroll distance (as % of the content image's own height) were measured
  * directly from the exported PNGs' alpha channel and aspect ratios — see the
  * commit that introduced this file for the exact pixel measurements.
+ *
+ * The CSS animation itself is always attached (so its timing/easing is
+ * defined once, in the keyframe), but stays paused until this component has
+ * actually scrolled into view — otherwise it starts ticking the moment the
+ * page mounts, and by the time a visitor actually scrolls down to it, the
+ * 16s loop could be anywhere in its cycle rather than at a clean start.
  */
 export function PhoneScrollDemo({
   frameSrc,
@@ -19,8 +36,25 @@ export function PhoneScrollDemo({
   frameAlt: string;
   scrollSrc: string;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: "-100px" });
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    if (!inView) {
+      const reset = setTimeout(() => setStarted(false), 0);
+      return () => clearTimeout(reset);
+    }
+    const timeout = setTimeout(() => setStarted(true), START_DELAY_MS);
+    return () => clearTimeout(timeout);
+  }, [inView]);
+
   return (
-    <div className="relative mx-auto w-[300px] max-w-full shrink-0" style={{ aspectRatio: "877 / 1783" }}>
+    <div
+      ref={ref}
+      className="relative mx-auto w-[300px] max-w-full shrink-0"
+      style={{ aspectRatio: "877 / 1783" }}
+    >
       {/* Height padded a couple points past the measured cutout (73.25%) so
           the scrolling image always overlaps the frame's bottom edge with
           margin for error — any excess simply hides behind the opaque bezel
@@ -36,7 +70,10 @@ export function PhoneScrollDemo({
           alt=""
           aria-hidden="true"
           className="w-full"
-          style={{ animation: "phone-scroll 16s ease-in-out infinite" }}
+          style={{
+            animation: "phone-scroll 16s ease-in-out infinite",
+            animationPlayState: started ? "running" : "paused",
+          }}
         />
       </div>
       {/* eslint-disable-next-line @next/next/no-img-element */}

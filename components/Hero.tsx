@@ -11,6 +11,8 @@ import {
 } from "framer-motion";
 import { Logo3D } from "@/components/Logo3D";
 import { AboutCards } from "@/components/AboutCards";
+import { heroScrollState, HERO_EXIT_MARGIN } from "@/components/heroScrollState";
+import { useTranslation } from "@/lib/i18n/ui";
 
 const TRANSITION_HEIGHT_VH = 220;
 
@@ -31,6 +33,7 @@ const HEADER_GAP = 24;
 const MID_PROGRESS = 0.75;
 
 export function Hero() {
+  const t = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Manually measure how many pixels of scroll the pinned transition spans
@@ -47,7 +50,12 @@ export function Hero() {
       const clearance = headerHeight + HEADER_GAP;
       setHeaderClearance(clearance);
       const stickyHeight = window.innerHeight - clearance;
-      setScrollRange(Math.max(containerRef.current.offsetHeight - stickyHeight, 1));
+      const range = Math.max(containerRef.current.offsetHeight - stickyHeight, 1);
+      setScrollRange(range);
+      // Published for HomeScrollSnap (app/page.tsx's section-snap system) —
+      // see heroScrollState.ts for why this is shared instead of
+      // re-derived.
+      heroScrollState.range = range;
     }
     measure();
     window.addEventListener("resize", measure);
@@ -100,8 +108,15 @@ export function Hero() {
   const goToStop = useCallback(
     (direction: "down" | "up") => {
       const range = scrollRangeRef.current;
-      const stops = [0, range * MID_PROGRESS, range];
       const y = window.scrollY;
+      // Once scroll has moved meaningfully past the pinned zone — e.g. the
+      // page-level HomeScrollSnap system has taken over and animated past
+      // it, or the user jumped there some other way (scrollbar, keyboard)
+      // — this hero-local stepper must stay out of the way entirely. It
+      // only ever owns scroll positions inside its own zone; anything past
+      // `range` belongs to whatever comes after Hero.
+      if (y > range + HERO_EXIT_MARGIN) return false;
+      const stops = [0, range * MID_PROGRESS, range];
       if (direction === "down") {
         const next = stops.find((stop) => stop > y + 1);
         if (next === undefined) return false;
@@ -210,7 +225,10 @@ export function Hero() {
   const rawY = useMotionValue(30);
   const glowX = useSpring(rawX, { stiffness: 60, damping: 20 });
   const glowY = useSpring(rawY, { stiffness: 60, damping: 20 });
-  const glowBackground = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, rgba(138,47,82,0.35), transparent 55%)`;
+  // rgba(226,63,142,...) = --color-accent (#e23f8e) — was the old, since-
+  // replaced accent color (#8a2f52) hardcoded here instead of tokenized;
+  // updated to match so the vignette tracks the current brand color.
+  const glowBackground = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, rgba(226,63,142,0.35), transparent 55%)`;
 
   // Cursor-driven tilt for the 3D logo: whichever side the pointer is nearer
   // to dips back slightly (like pressing down on that edge), on top of the
@@ -261,7 +279,7 @@ export function Hero() {
       style={{ height: `${TRANSITION_HEIGHT_VH}vh` }}
     >
       <div
-        className="sticky overflow-hidden px-[10vw]"
+        className="sticky overflow-hidden px-page-x"
         style={{ top: headerClearance, height: `calc(100vh - ${headerClearance}px)` }}
         onMouseMove={handleMouseMove}
       >
@@ -281,23 +299,23 @@ export function Hero() {
           tiltY={logoTiltY}
         />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-[10vw] text-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-page-x text-center">
           <motion.div
             style={{ opacity: heroOpacity, y: heroY, willChange: "opacity, transform" }}
             className="relative max-w-3xl"
           >
-            <p className="mb-2 text-sm uppercase tracking-[0.2em] text-fg-secondary">
+            <p className="mb-2 text-sm uppercase tracking-[0.2em] text-text-secondary">
               Florencia Micieli
             </p>
             <h1 className="whitespace-nowrap font-display text-xl font-semibold leading-tight sm:text-4xl lg:text-6xl">
-              UX / UI - Product Designer
+              {t.hero.role}
             </h1>
             <button
               type="button"
               onClick={handleCtaClick}
-              className="mt-5 inline-flex items-center rounded-full bg-fg px-4 py-1.5 text-sm font-medium text-bg transition hover:scale-[1.03] hover:bg-accent-light"
+              className="mt-5 inline-flex h-9 items-center justify-center rounded-[5px] bg-text-primary px-5 text-[14px] font-medium text-bg transition hover:scale-[1.03] hover:bg-accent"
             >
-              View more
+              {t.hero.viewMore}
             </button>
           </motion.div>
         </div>
@@ -306,17 +324,13 @@ export function Hero() {
             the whole group is vertically centered as one block within the
             pinned viewport once settled — not bottom-anchored, which left
             all the leftover space stacked above it instead of split evenly. */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden px-[10vw] text-center">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden px-page-x text-center">
           <motion.div
             style={{ opacity: headingOpacity, y: headingY, willChange: "opacity, transform" }}
             className="relative mx-auto max-w-2xl"
           >
-            <h2 className="font-display text-3xl font-semibold text-fg sm:text-4xl">About me</h2>
-            <p className="mt-2 leading-relaxed text-fg-secondary">
-              3+ years designing digital products for B2B and SaaS environments. Design
-              systems, high-fidelity prototypes, and a workflow enhanced by generative AI
-              to explore, document, and build interfaces independently.
-            </p>
+            <h2 className="font-display text-3xl font-semibold text-text-primary sm:text-4xl">{t.hero.aboutHeading}</h2>
+            <p className="mt-2 leading-relaxed text-text-secondary">{t.hero.aboutText}</p>
           </motion.div>
 
           <div className="relative w-full">
@@ -326,9 +340,9 @@ export function Hero() {
 
         <motion.p
           style={{ opacity: scrollHintOpacity }}
-          className="pointer-events-none absolute bottom-4 left-3 text-xs text-fg-secondary sm:left-4"
+          className="pointer-events-none absolute bottom-4 left-3 text-sm text-text-secondary sm:left-4"
         >
-          Scroll to explore
+          {t.hero.scrollHint}
         </motion.p>
       </div>
     </section>

@@ -1,31 +1,45 @@
+"use client";
+
 import { Reveal } from "@/components/Reveal";
+import { Footer } from "@/components/Footer";
+import { useTranslation } from "@/lib/i18n/ui";
 
 export function Contact() {
+  const t = useTranslation();
   return (
-    <section id="contact" className="relative px-[10vw] py-14">
+    <section id="contact" className="relative flex min-h-screen flex-col px-page-x pt-section-top pb-12">
       <Reveal>
-        <h2 className="text-2xl font-semibold">Contact</h2>
+        <h2 className="text-2xl font-semibold">{t.contact.heading}</h2>
       </Reveal>
-      <Reveal delay={0.05}>
-        <p className="mt-3 leading-relaxed text-fg-secondary">
-          Let&apos;s talk about a project?{" "}
-          <a
-            href="mailto:fmicieli94@gmail.com"
-            className="text-accent-light underline underline-offset-4 hover:text-fg"
-          >
-            fmicieli94@gmail.com
-          </a>
-        </p>
-      </Reveal>
-      <Reveal delay={0.1}>
-        <p className="mt-2 text-sm text-fg-secondary">
-          Full project history, while I migrate this portfolio: Behance
-          {" "}
-          <span className="text-fg-secondary/70">
-            (TODO: content pending — missing the Behance profile URL)
-          </span>
-        </p>
-      </Reveal>
+      <div className="mt-title-to-content flex flex-1 flex-col justify-center">
+        <Reveal delay={0.05}>
+          <p className="leading-relaxed text-text-secondary">
+            {t.contact.prompt}{" "}
+            <a
+              href="mailto:fmicieli94@gmail.com"
+              className="text-accent underline underline-offset-4 hover:text-text-primary"
+            >
+              fmicieli94@gmail.com
+            </a>
+          </p>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <p className="mt-2 text-sm text-text-secondary">
+            {t.contact.behanceLine}
+            {" "}
+            <span className="text-text-secondary">{t.contact.behanceTodo}</span>
+          </p>
+        </Reveal>
+      </div>
+      {/* Footer lives inside Contact's own section now (bottom of this
+          section's flex column, via mt-auto) rather than as a trailing
+          element after <main> — every section on this page is meant to be
+          exactly one viewport, driven by HomeScrollSnap, so the footer
+          needs to already be on screen once the user reaches this section
+          instead of requiring extra scroll past it. */}
+      <div className="mt-auto">
+        <Footer />
+      </div>
     </section>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { useScrolled } from "@/components/useScrolled";
+import { useTranslation } from "@/lib/i18n/ui";
 
 const STORAGE_KEY = "cookie-consent";
 
@@ -26,6 +27,7 @@ function dismiss() {
 export function CookieBanner() {
   const consentPending = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const scrolled = useScrolled();
+  const t = useTranslation();
 
   if (!consentPending || !scrolled) return null;
 
@@ -34,16 +36,13 @@ export function CookieBanner() {
       role="status"
       className="glass fixed inset-x-4 bottom-4 z-50 flex flex-col gap-3 p-4 text-sm sm:inset-x-auto sm:right-4 sm:max-w-sm"
     >
-      <p className="text-fg-secondary">
-        This site uses minimal cookies to work correctly. None are used for
-        third-party tracking.
-      </p>
+      <p className="text-text-secondary">{t.cookieBanner.text}</p>
       <button
         type="button"
         onClick={dismiss}
-        className="self-start rounded-lg bg-accent px-4 py-1.5 text-xs font-medium text-fg transition-transform hover:scale-[1.03]"
+        className="self-start rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-text-primary transition-transform hover:scale-[1.03]"
       >
-        Got it
+        {t.cookieBanner.button}
       </button>
     </div>
   );

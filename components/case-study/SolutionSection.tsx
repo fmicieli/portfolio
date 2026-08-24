@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import type { CaseStudyImage, SolutionPoint } from "@/data/projects";
 import { SectionHeading } from "@/components/case-study/SectionHeading";
 import { PhoneScrollDemo } from "@/components/case-study/PhoneScrollDemo";
@@ -26,98 +29,170 @@ export function SolutionSection({
   const hasVisual = Boolean(image || phoneDemo);
 
   return (
-    <div>
+    <div className="flex h-full flex-1 flex-col">
       <SectionHeading heading={heading} subheading={subheading} />
-      <div className={hasVisual ? "mt-6 grid gap-8 sm:grid-cols-2 sm:items-center" : "mt-6"}>
+      <div className="mt-title-to-content flex flex-1 flex-col justify-center">
+      {/* The visual column (phone + annotations) needs ~340px just for the
+          phone and its gap before any annotation text — splitting into two
+          columns as early as `sm` (640px) leaves that column well under
+          300px through the whole tablet range, which pushed the arrow row
+          (see below) out past the viewport edge. `lg` (1024px) is the
+          first point where a half-width column is comfortably >= 340px. */}
+      <div className={hasVisual ? "grid gap-8 lg:grid-cols-2 lg:items-center" : ""}>
         <ul className="flex flex-col gap-8">
-          {points.map((point) => (
-            <li key={point.number} className="flex gap-3">
-              <span className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-full bg-accent/20 font-display text-[21px] font-semibold text-accent-light">
+          {points.map((point, i) => (
+            <motion.li
+              key={point.number}
+              className="flex gap-3"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <span className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-full bg-accent-soft font-display text-[21px] font-semibold text-accent">
                 {point.number}
               </span>
               <div>
-                <p className="font-medium text-fg">{point.title}</p>
-                <p className="mt-1 text-base leading-relaxed text-fg-secondary">
+                <p className="font-medium text-text-primary">{point.title}</p>
+                <p className="mt-1 text-body leading-relaxed text-text-secondary">
                   {point.description}
                 </p>
               </div>
-            </li>
+            </motion.li>
           ))}
         </ul>
 
         {hasVisual ? (
-          // Mockup on the left, three callouts pointing at fixed spots on
-          // its screen (balance card near the top, shortcuts row just below
-          // it, bottom nav near the bottom) on the right. All three are on
-          // screen together only during the initial pause, then fade out
-          // together the moment the auto-scroll starts, via the shared
-          // annotation-group-fade keyframe (see globals.css).
-          <div className="flex flex-row items-stretch justify-center gap-10">
-            {phoneDemo ? (
-              <div className="relative shrink-0">
-                <PhoneScrollDemo
-                  frameSrc={phoneDemo.frameSrc}
-                  frameAlt={phoneDemo.frameAlt}
-                  scrollSrc={phoneDemo.scrollSrc}
-                />
+          <>
+            {/* < xl: the pointer-arrow layout below assumes a side-by-side
+                row where the annotations column shares the phone's exact
+                height (so each callout's % position lines up with the spot
+                on the screen it's meant to point at) AND has enough width
+                left over after the phone's own ~300px + gap for readable
+                callout text — that's only true from `xl` (1280px) up, given
+                the grid above only splits into two columns at `lg`. Below
+                that (all of mobile, all of tablet, and small desktop
+                windows) gets its own simple, non-overlapping rendering
+                instead: the mockup on top, the same annotation copy below
+                as a plain static list, no arrows. */}
+            {(phoneDemo || image) && (
+              <div className="flex flex-col items-center gap-4 xl:hidden">
+                {phoneDemo ? (
+                  <PhoneScrollDemo
+                    frameSrc={phoneDemo.frameSrc}
+                    frameAlt={phoneDemo.frameAlt}
+                    scrollSrc={phoneDemo.scrollSrc}
+                  />
+                ) : (
+                  image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-32 rounded-2xl border border-border shadow-xl shadow-black/30"
+                    />
+                  )
+                )}
+                {phoneDemo && (
+                  <ul className="flex w-full flex-col gap-2">
+                    {annotations.map((annotation) => (
+                      <li
+                        key={annotation}
+                        className="rounded-card border border-border border-t-[var(--color-border-top-highlight)] bg-surface px-3 py-2 text-body leading-relaxed text-text-secondary shadow-card backdrop-blur-card"
+                      >
+                        {annotation}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-            ) : (
-              image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-32 shrink-0 rounded-2xl border border-white/10 shadow-xl shadow-black/30 sm:w-40"
-                />
-              )
             )}
 
-            {phoneDemo && (
-              <div
-                className="relative min-h-[64px] flex-1"
-                style={{ animation: "annotation-group-fade 16s ease-in-out infinite" }}
-              >
-                {annotations.map((annotation, i) => (
-                  <div
-                    key={annotation}
-                    className="absolute left-0 flex w-full -translate-y-1/2 items-center gap-2"
-                    style={{ top: ANNOTATION_TOP[i] }}
-                  >
-                    <svg
-                      viewBox="0 0 40 24"
-                      aria-hidden="true"
-                      className="w-8 shrink-0 text-accent-light"
+            {/* xl+: mockup on the left, three callouts pointing at fixed
+                spots on its screen (balance card near the top, shortcuts
+                row just below it, bottom nav near the bottom) on the
+                right. All three are on screen together only during the
+                initial pause, then fade out together the moment the
+                auto-scroll starts, via the shared annotation-group-fade
+                keyframe (see globals.css). */}
+            <motion.div
+              className="hidden items-stretch justify-center gap-10 xl:flex"
+              initial={{ opacity: 0, scale: 0.96 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: false, margin: "-40px" }}
+              transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {phoneDemo ? (
+                <div className="relative shrink-0">
+                  <PhoneScrollDemo
+                    frameSrc={phoneDemo.frameSrc}
+                    frameAlt={phoneDemo.frameAlt}
+                    scrollSrc={phoneDemo.scrollSrc}
+                  />
+                </div>
+              ) : (
+                image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-32 shrink-0 rounded-2xl border border-border shadow-xl shadow-black/30 sm:w-40"
+                  />
+                )
+              )}
+
+              {phoneDemo && (
+                <div
+                  className="relative min-h-[64px] flex-1"
+                  style={{ animation: "annotation-group-fade 16s ease-in-out infinite" }}
+                >
+                  {annotations.map((annotation, i) => (
+                    <div
+                      key={annotation}
+                      className="absolute left-0 flex w-full -translate-y-1/2 items-center gap-2"
+                      style={{ top: ANNOTATION_TOP[i] }}
                     >
-                      <path d="M1 12 H30" stroke="currentColor" strokeWidth="2" fill="none" />
-                      <path
-                        d="M22 5 L32 12 L22 19"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs leading-relaxed text-fg-secondary">
-                      {annotation}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                      <svg
+                        viewBox="0 0 40 24"
+                        aria-hidden="true"
+                        className="w-8 shrink-0 text-accent"
+                      >
+                        <path d="M1 12 H30" stroke="currentColor" strokeWidth="2" fill="none" />
+                        <path
+                          d="M22 5 L32 12 L22 19"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <span className="min-w-0 flex-1 rounded-card border border-border border-t-[var(--color-border-top-highlight)] bg-surface px-3 py-2 text-body leading-relaxed text-text-secondary shadow-card backdrop-blur-card">
+                        {annotation}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </>
         ) : (
           <ul className="mt-4 flex flex-wrap gap-2">
-            {annotations.map((annotation) => (
-              <li
+            {annotations.map((annotation, i) => (
+              <motion.li
                 key={annotation}
-                className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-fg-secondary"
+                className="rounded-full border border-border bg-surface px-3 py-1.5 text-body text-text-secondary"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, margin: "-40px" }}
+                transition={{ duration: 0.4, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
               >
                 {annotation}
-              </li>
+              </motion.li>
             ))}
           </ul>
         )}
+      </div>
       </div>
     </div>
   );

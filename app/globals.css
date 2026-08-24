@@ -1,28 +1,161 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens — single source of truth for color, spacing, typography and
+ * elevation across the whole site (not just the case-study pages). Defined
+ * once here and exposed to Tailwind via `@theme inline` below, so every
+ * token is usable as a normal utility class (`bg-surface`, `text-stat-lg`,
+ * `shadow-card`, `rounded-pill`, `pt-section-top`...) instead of being
+ * duplicated inline per component. This replaces the previous
+ * bg/fg/fg-secondary/accent/accent-light set — there is one token system,
+ * not two running in parallel.
+ */
 :root {
-  /* Palette sampled directly from the obermann-webdesign.de reference video:
-     dark wine/plum background, warm off-white text, muted magenta accent. */
-  --color-bg: #150a13;
-  --color-fg: #f5f0f3;
-  --color-fg-secondary: #b3a6ac;
-  --color-accent: #8a2f52;
-  --color-accent-light: #d98bae;
+  /* Color */
+  --color-bg: #0d0710;
+  /* v3: surface is a translucent white overlay, not a color of its own —
+     that's what guarantees it reads lighter than whatever's behind it
+     (the "About me" vignette, the pure-black "Featured projects" section,
+     a case-study card grid) without hand-tuning a fixed color per
+     background. A solid --color-surface (the v1 approach) came out nearly
+     invisible against both of those precisely because it was calibrated
+     against neither. */
+  /* Fill opacity history: 0.07 -> 0.13 (too faint against the "About me"
+     vignette) -> 0.10 -> 0.05 (explicit final value) — the border/highlight
+     and pure-white text now carry most of the "glass" definition, so the
+     fill itself can stay this light. */
+  --color-surface: rgba(255, 255, 255, 0.05);
+  --color-surface-hover: rgba(255, 255, 255, 0.09);
+  --color-border: rgba(255, 255, 255, 0.18);
+  /* Brighter line on just the top edge of a card, simulating light hitting
+     the top of a pane of glass — paired with border-t-[var(...)] at each
+     card, not part of the plain 4-side --color-border. */
+  --color-border-top-highlight: rgba(255, 255, 255, 0.36);
+  --color-border-accent: rgba(226, 63, 142, 0.4);
+
+  /* Pure white, not an off-white — text sitting on the translucent
+     white-overlay cards needs the crispest possible contrast against that
+     fill, and #f5f0f2 vs #ffffff was an imperceptible difference anyway. */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #b3a6b8;
+  --color-text-muted: #7a6d7f;
+
+  --color-accent: #e23f8e;
+  --color-accent-soft: rgba(226, 63, 142, 0.15);
+
+  /* Elevation */
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-card-accent: 0 4px 24px rgba(226, 63, 142, 0.15);
+
+  /* Radius */
+  --radius-card: 12px;
+  --radius-pill: 999px;
 }
 
 @theme inline {
   --color-bg: var(--color-bg);
-  --color-fg: var(--color-fg);
-  --color-fg-secondary: var(--color-fg-secondary);
+  --color-surface: var(--color-surface);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-border: var(--color-border);
+  --color-border-top-highlight: var(--color-border-top-highlight);
+  --color-border-accent: var(--color-border-accent);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
   --color-accent: var(--color-accent);
-  --color-accent-light: var(--color-accent-light);
+  --color-accent-soft: var(--color-accent-soft);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-card-accent: var(--shadow-card-accent);
+
+  --radius-card: var(--radius-card);
+  --radius-pill: var(--radius-pill);
+
+  /* Backs the `backdrop-blur-card` utility (Tailwind's `--blur-*` theme
+     namespace drives both `blur-*` and `backdrop-blur-*`) — the actual
+     "frosted glass" part of the card treatment: it blurs whatever's behind
+     the card rather than just tinting it, which reads as glass instead of
+     a flat dark panel. */
+  --blur-card: 20px;
+
+  /* Spacing: the base 4/8/12/16/24/32/48/64px scale is already covered by
+     Tailwind's default p-1/p-2/p-3/p-4/p-6/p-8/p-12/p-16 (its spacing
+     multiplier is 4px), so only the two named, section-specific values need
+     a token of their own. --space-section-top is 100px, not the 72px the
+     brief specifies: 100px = this site's real fixed-header height (52px)
+     + the 48px minimum clearance required separately (measured and
+     confirmed earlier), and 72px would leave only 20px — under that
+     minimum. Carried over unchanged from the v1 pass since the brief's
+     re-stated 72px doesn't address that measurement. */
+  --spacing-section-top: 100px;
+  --spacing-title-to-content: 40px;
+
+  /* Fluid page gutter — replaces the old flat `px-[10vw]` used on every
+     full-bleed section (Hero, Header, ProjectsGrid, Contact, Footer, the
+     case-study page shell). `10vw` alone reads fine on desktop but produces
+     ~38-40px of dead margin on a 375-400px phone; the explicit requirement
+     is 16px at the mobile floor, no fixed halfway value at tablet widths,
+     and 10vw again once the viewport is wide enough that 10vw itself is
+     already >=16px-worthy — i.e. a genuinely continuous ramp between the
+     two, not a value that jumps at a breakpoint.
+     Built with the standard two-point fluid-scale formula (a linear
+     function of viewport width that equals MIN at minWidth and MAX at
+     maxWidth), clamped so it never goes below 16px on smaller phones and
+     never exceeds 10vw once past the top anchor:
+       minWidth = 375px  (mobile floor)      -> MIN = 16px
+       maxWidth = 1024px (tablet's own upper -> MAX = 10vw at 1024px
+                  edge, i.e. where "10vw already      = 102.4px
+                  worked" starts)
+     slope   = (MAX - MIN) / (maxWidth - minWidth) = 86.4 / 649 = 0.133128
+     preferred(w) = (MIN - slope*minWidth) + (slope*100)*1vw
+                  = -33.923px + 13.313vw
+     Below 375px width the clamp floors at 16px; from 375-1024px it rides
+     the preferred line (16px -> 102.4px); above 1024px `preferred` would
+     keep climbing past `10vw`, so clamp's max caps it back down to plain
+     `10vw` — which, since `preferred(1024) = 10vw(1024)` exactly, is a
+     seamless handoff rather than a snap. */
+  --spacing-page-x: clamp(16px, calc(-33.923px + 13.313vw), 10vw);
+
+  /* Typography scale — font-size paired with its line-height (Tailwind's
+     `--text-<name>--line-height` convention); weight is applied at each
+     usage site via the matching font-bold/font-semibold/font-normal
+     utility, same as every other Tailwind size token. Sizes bumped in v2
+     for a size jump that actually reads at a glance. */
+  --text-display: 34px;
+  --text-display--line-height: 42px;
+  --text-card-title: 20px;
+  --text-card-title--line-height: 26px;
+  --text-subtitle: 16px;
+  --text-subtitle--line-height: 24px;
+  --text-label: 11px;
+  --text-label--line-height: 16px;
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+  --text-tag: 13px;
+  --text-tag--line-height: 18px;
+  --text-stat-lg: 40px;
+  --text-stat-lg--line-height: 44px;
+  --text-stat-md: 24px;
+  --text-stat-md--line-height: 28px;
+
   --font-display: var(--font-space-grotesk);
   --font-body: var(--font-inter);
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-fg);
+  /* A faint, static wine-toned glow sits behind every page (fixed to the
+     viewport, not the document, so it doesn't just scroll away after the
+     first screen) — the same accent color as Hero's interactive
+     cursor-follow glow, just quiet and non-interactive, so the rest of the
+     site (About cards outside Hero, Projects, Contact, every case-study
+     page) shares a bit of that identity instead of reading as flat black
+     the moment you scroll past Hero. Still layered on top of the same
+     --color-bg base, so it stays subtle rather than tinting everything. */
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226, 63, 142, 0.1), transparent 65%),
+    var(--color-bg);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
   font-family: var(--font-body);
 }
 

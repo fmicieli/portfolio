@@ -1,0 +1,122 @@
+"use client";
+
+import { useEffect } from "react";
+import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "@/lib/i18n/ui";
+import { getLocalizedProjectBySlug } from "@/data/getProjects";
+import { CaseStudySection } from "@/components/CaseStudySection";
+import { CaseStudyBlocks } from "@/components/case-study/CaseStudyBlocks";
+import { Reveal } from "@/components/Reveal";
+import { Footer } from "@/components/Footer";
+import { useScrollContainer } from "@/components/case-study/ScrollMain";
+
+/**
+ * Everything the project page used to render inline for a given slug, now
+ * localized via `useLanguage()`/`getLocalizedProjectBySlug` instead of the
+ * page's own build-time, English-only `getProjectBySlug` lookup (that one
+ * stays put in the page for `notFound()`/`generateMetadata`, which are
+ * necessarily English/build-time since there's no per-locale routing).
+ */
+export function CaseStudyPageContent({ slug }: { slug: string }) {
+  const { language } = useLanguage();
+  const t = useTranslation();
+  const project = getLocalizedProjectBySlug(slug, language);
+  const scrollContainer = useScrollContainer();
+
+  // Belt-and-suspenders: if this component instance is ever reused across
+  // a slug change (e.g. a future direct project-to-project link, or a
+  // Next.js router-cache restore that skips a fresh mount) rather than
+  // fully remounting, ScrollMain's `<main>` node would otherwise carry
+  // over whatever `scrollTop` the previous project left it at — landing
+  // the new project mid-page instead of at the top. Keyed on `slug` only,
+  // so this never fires on an in-place re-render of the same project (e.g.
+  // the language toggle), which should keep the user's scroll position.
+  useEffect(() => {
+    scrollContainer?.current?.scrollTo(0, 0);
+  }, [slug, scrollContainer]);
+
+  // Defensive only: the page itself already calls notFound() via the
+  // English-only lookup before this component ever renders, so `project`
+  // should always resolve here.
+  if (!project) return null;
+
+  const sections = Object.values(project.sections);
+
+  return (
+    <div className="px-page-x">
+      {/* once={false}, matching every other Reveal in the case-study tree
+          (see CaseStudySection/CaseStudyBlocks): this is the same
+          component instance/DOM position across a slug change if ever
+          reused rather than remounted (see the scroll-reset effect above),
+          so `once={true}`'s internal "already fired" state could carry
+          over and skip the reveal — or, on a fresh mount, simply never
+          have a chance to fire if the container's initial layout isn't
+          settled yet when the IntersectionObserver first checks. Replaying
+          on every viewport entry avoids depending on that first-mount
+          timing being exact. */}
+      <Reveal once={false} className="pt-section-top">
+        <Link href="/#projects" className="text-sm text-text-secondary hover:text-text-primary">
+          {t.projectPage.backToProjects}
+        </Link>
+
+        {!project.caseStudyBlocks && (
+          <>
+            <h1 className="mt-6 font-display text-3xl font-semibold sm:text-4xl">
+              {project.title}
+            </h1>
+            <p className="mt-3 max-w-xl leading-relaxed text-text-secondary">{project.tagline}</p>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <li
+                  key={tag}
+                  className="rounded-full border border-border px-3 py-1 text-sm text-text-secondary"
+                >
+                  {tag}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {!project.contentReady && (
+          <p className="mt-4 rounded-lg border border-[var(--color-border-accent)] bg-accent-soft px-4 py-3 text-sm text-text-secondary">
+            {t.projectPage.contentPending}{" "}
+            <a
+              href={project.behanceUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-4 hover:text-text-primary"
+            >
+              {t.projectPage.viewOnBehance}
+            </a>
+            .
+          </p>
+        )}
+      </Reveal>
+
+      {project.caseStudyBlocks ? (
+        // Block-based case studies embed Footer inside their own last
+        // section (NextStepsSection, after the disclaimer) instead of
+        // rendering it here — see NextStepsSection.tsx.
+        <div className="mt-8">
+          <CaseStudyBlocks blocks={project.caseStudyBlocks} />
+        </div>
+      ) : (
+        <>
+          <div className="mt-4 divide-y divide-white/10">
+            {sections.map((section, i) => (
+              <CaseStudySection key={section.heading} section={section} reverse={i % 2 === 1} />
+            ))}
+          </div>
+          {/* No next-steps block to embed Footer in for this (placeholder
+              content) path, so it stays page-level, same as before — just
+              nested inside this px-page-x wrapper now instead of living
+              outside it, since Footer no longer carries its own horizontal
+              padding (see Footer.tsx). */}
+          <Footer />
+        </>
+      )}
+    </div>
+  );
+}

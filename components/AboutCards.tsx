@@ -1,28 +1,16 @@
 "use client";
 
 import { motion, useTransform, type MotionValue } from "framer-motion";
+import { useTranslation } from "@/lib/i18n/ui";
 
-const skills = [
-  {
-    title: "Research & Testing",
-    text: "Understanding real user needs through interviews, usability testing, and Nielsen's heuristics.",
-    tags: ["Claude", "Google Meet", "Loom", "Miro"],
-  },
-  {
-    title: "UX/UI Design",
-    text: "Wireframes, high-fidelity prototypes, and accessible, scalable design systems.",
-    tags: ["Figma", "Stark"],
-  },
-  {
-    title: "Documentation & Visual Design",
-    text: "Specs, redlines, and visual assets ready for development.",
-    tags: ["Figma", "Photoshop", "Illustrator"],
-  },
-  {
-    title: "AI-Assisted Vibe Coding",
-    text: "Building functional prototypes independently, powered by AI.",
-    tags: ["Claude Code", "Framer", "Vercel"],
-  },
+// Tool-name tags are proper nouns — not translated, kept in one fixed order
+// that lines up positionally with the translated title/text pulled from the
+// UI dictionary (see useTranslation() below).
+const skillTags = [
+  ["Claude", "Google Meet", "Loom", "Miro"],
+  ["Figma", "Stark"],
+  ["Figma", "Photoshop", "Illustrator"],
+  ["Claude Code", "Framer", "Vercel"],
 ];
 
 // Narrower and taller than the previous grid version so all four fit in one
@@ -43,16 +31,18 @@ const ROTATE_STEP = 6;
 // (was 460) so more of the fanned stack already shows before any scrolling.
 const PEEK_OFFSET = 322;
 
-function CardContent({ item }: { item: (typeof skills)[number] }) {
+type Skill = { title: string; text: string; tags: string[] };
+
+function CardContent({ item }: { item: Skill }) {
   return (
     <>
-      <h3 className="font-display text-lg font-semibold text-fg">{item.title}</h3>
-      <p className="text-sm leading-relaxed text-fg-secondary">{item.text}</p>
+      <h3 className="font-display text-card-title font-bold text-text-primary">{item.title}</h3>
+      <p className="text-body leading-relaxed text-text-secondary">{item.text}</p>
       <div className="mt-auto flex flex-wrap gap-2">
         {item.tags.map((tag) => (
           <span
             key={tag}
-            className="rounded-full border border-white bg-white/20 px-1.5 py-0.5 text-xs text-white"
+            className="rounded-full border border-white bg-white/20 px-2.5 py-1.5 text-tag font-medium text-white"
           >
             {tag}
           </span>
@@ -63,7 +53,7 @@ function CardContent({ item }: { item: (typeof skills)[number] }) {
 }
 
 const CARD_STYLE =
-  "flex flex-col gap-1.5 rounded-xl border border-white/10 bg-white/10 px-6 pt-[18px] pb-6 backdrop-blur-md";
+  "flex flex-col gap-1.5 rounded-card border border-border border-t-[var(--color-border-top-highlight)] bg-surface px-6 pt-[18px] pb-6 shadow-card backdrop-blur-card";
 
 /**
  * Desktop/tablet only: the four cards start tightly overlapped and fanned —
@@ -78,7 +68,7 @@ const CARD_STYLE =
  * this stays a fixed, static set of hook calls. y is shared: it's a single
  * row now, so every card rises by the same amount.
  */
-function StackToRow({ progress }: { progress: MotionValue<number> }) {
+function StackToRow({ progress, skills }: { progress: MotionValue<number>; skills: Skill[] }) {
   const opacity = useTransform(progress, [0, 0.4], [0, 1]);
   const y = useTransform(progress, [0, 1], [PEEK_OFFSET, 0]);
 
@@ -134,7 +124,7 @@ function StackToRow({ progress }: { progress: MotionValue<number> }) {
 /** Mobile: a plain 2-column grid (no horizontal spread to animate — there's
  *  no room for a fanned row on a narrow screen), sharing the same
  *  peek-from-below/fade-in as the desktop version. */
-function StackedGrid({ progress }: { progress: MotionValue<number> }) {
+function StackedGrid({ progress, skills }: { progress: MotionValue<number>; skills: Skill[] }) {
   const y = useTransform(progress, [0, 1], [PEEK_OFFSET, 0]);
   const opacity = useTransform(progress, [0, 0.4], [0, 1]);
 
@@ -150,10 +140,16 @@ function StackedGrid({ progress }: { progress: MotionValue<number> }) {
 }
 
 export function AboutCards({ progress }: { progress: MotionValue<number> }) {
+  const t = useTranslation();
+  const skills: Skill[] = t.aboutCards.skills.map((skill, i) => ({
+    ...skill,
+    tags: skillTags[i],
+  }));
+
   return (
     <>
-      <StackToRow progress={progress} />
-      <StackedGrid progress={progress} />
+      <StackToRow progress={progress} skills={skills} />
+      <StackedGrid progress={progress} skills={skills} />
     </>
   );
 }

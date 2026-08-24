@@ -13,7 +13,8 @@ export type BenchmarkRow = {
 };
 export type SolutionPoint = { number: string; title: string; description: string };
 export type FlowStep = { number: string; label: string };
-export type GuideStepImage = CaseStudyImage | { placeholder: string };
+export type GuideStepVideo = { videoSrc: string; alt: string };
+export type GuideStepImage = CaseStudyImage | GuideStepVideo | { placeholder: string };
 export type GuideStep = {
   number: string;
   title: string;
@@ -23,6 +24,39 @@ export type GuideStep = {
 export type ImpactCard = { title: string; problem: string; solution: string; impact: string };
 export type NextPhase = { title: string; items: string[] };
 export type CaseStudyImage = { src: string; alt: string };
+export type LabeledImage = CaseStudyImage & { label: string };
+
+/** Generic columns+rows table, reused across every Tribu Music spec table
+ * (usability results, type scale, spacing tokens, border radii, contrast
+ * ratios, touch targets, compliance checklist) instead of a bespoke typed
+ * shape per table — same spirit as BenchmarkRow, just table-shaped. */
+export type SimpleTable = { columns: string[]; rows: string[][] };
+
+export type ContextBenchmarkRow = { app: string; logo?: string; strengths: string; weaknesses: string };
+export type PersonaField = { label: string; value: string };
+export type PersonaData = {
+  name: string;
+  quote: string;
+  photo?: CaseStudyImage;
+  fields: PersonaField[];
+  justificacionLabel: string;
+  justificacion: string;
+  bioLabel: string;
+  bio: string;
+  objetivosLabel: string;
+  objetivos: string[];
+  motivacionesLabel: string;
+  motivaciones: string[];
+  frustracionesLabel: string;
+  frustraciones: string[];
+  habilidadesLabel: string;
+  habilidades: string;
+};
+
+export type BeforeAfterPair = { label: string; before: CaseStudyImage; after: CaseStudyImage };
+export type PieChartData = { question: string; slices: { label: string; value: number }[] };
+export type UiKitGroup = { title: string; images: LabeledImage[] };
+export type ColorSwatch = { name: string; hex: string };
 
 export type CaseStudyBlock =
   | {
@@ -32,6 +66,9 @@ export type CaseStudyBlock =
       meta: CaseStudyMeta[];
       tags: string[];
       images?: CaseStudyImage[];
+      video?: { src: string; alt: string };
+      watermark?: { src: string; alt: string };
+      mockupRadius?: string;
     }
   | {
       type: "problem";
@@ -69,8 +106,132 @@ export type CaseStudyBlock =
     }
   | { type: "step-guide"; heading: string; subheading: string; steps: GuideStep[] }
   | { type: "impact"; heading: string; cards: ImpactCard[] }
-  | { type: "next-steps"; heading: string; subheading: string; phases: NextPhase[] }
-  | { type: "disclaimer"; text: string };
+  | { type: "next-steps"; heading: string; subheading: string; phases: NextPhase[]; disclaimer?: string }
+  | {
+      type: "context";
+      heading: string;
+      subheading: string;
+      intro: string;
+      insightsHeading: string;
+      insights: string[];
+      researchHeading: string;
+      researchText: string;
+      benchmarkingHeading: string;
+      benchmarkingColumns: string[];
+      benchmarkingRows: ContextBenchmarkRow[];
+      benchmarkingCtaLabel: string;
+      persona: PersonaData;
+      personaCtaLabel: string;
+    }
+  | {
+      type: "design-process";
+      heading: string;
+      subheading: string;
+      happyPathHeading: string;
+      happyPathText: string;
+      happyPathImages: LabeledImage[];
+      digitizationHeading: string;
+      digitizationText: string;
+      digitizationImages: LabeledImage[];
+      gridHeading: string;
+      gridText: string;
+      gridSpecs: { label: string; value: string }[];
+      gridDemoImage: CaseStudyImage;
+      midFiHeading: string;
+      midFiText: string;
+      midFiImages: LabeledImage[];
+      figmaLinkLabel: string;
+      figmaLinkHref: string;
+    }
+  | {
+      type: "usability-test";
+      heading: string;
+      subheading: string;
+      tasks: string[];
+      resultsHeading: string;
+      resultsTable: SimpleTable;
+      viewAllLabel: string;
+      findingsHeading: string;
+      findings: string[];
+      analysisHeading: string;
+      analysis: { title: string; text: string }[];
+      surveyHeading: string;
+      surveyCharts: PieChartData[];
+      improvementsHeading: string;
+      improvementsIntro: string;
+      improvements: string[];
+      beforeAfterHeading: string;
+      beforeAfterPairs: BeforeAfterPair[];
+    }
+  | {
+      type: "brand-identity";
+      heading: string;
+      subheading: string;
+      logoHeading: string;
+      logoIntro: string;
+      logoBullets: string[];
+      logoHorizontal: CaseStudyImage;
+      logoVertical: CaseStudyImage;
+      voiceHeading: string;
+      voiceTitle: string;
+      voiceBullets: string[];
+      toneTitle: string;
+      toneBullets: string[];
+      colorHeading: string;
+      colorSwatches: ColorSwatch[];
+      colorUsageTitle: string;
+      colorUsageBullets: string[];
+      colorAccessibilityTitle: string;
+      colorAccessibilityBullets: string[];
+      viewAllLabel: string;
+      typographyHeading: string;
+      fontFamiliesTitle: string;
+      fontFamilies: string[];
+      typeScaleTitle: string;
+      typeScaleTable: SimpleTable;
+      iconographyHeading: string;
+      iconSpecsTitle: string;
+      iconSpecs: string[];
+      iconUsageTitle: string;
+      iconUsageBullets: string[];
+      spacingHeading: string;
+      spacingTitle: string;
+      spacingTable: SimpleTable;
+      radiusTitle: string;
+      radiusTable: SimpleTable;
+    }
+  | { type: "ui-kit"; heading: string; subheading: string; intro: string; groups: UiKitGroup[] }
+  | {
+      type: "prototype";
+      heading: string;
+      subheading: string;
+      intro: string;
+      bullets: string[];
+      linkLabel: string;
+      linkHref: string;
+      screens: LabeledImage[];
+    }
+  | {
+      type: "accessibility";
+      heading: string;
+      subheading: string;
+      intro: string;
+      areas: string[];
+      typographyColorHeading: string;
+      typographyColorIntro: string;
+      contrastTable: SimpleTable;
+      touchHeading: string;
+      touchIntro: string;
+      touchTable: SimpleTable;
+      formsHeading: string;
+      formsLabelsTitle: string;
+      formsLabelsBullets: string[];
+      formsStatesTitle: string;
+      formsStatesBullets: string[];
+      resultsHeading: string;
+      complianceTable: SimpleTable;
+    }
+  | { type: "closing"; heading: string; subheading: string; images: CaseStudyImage[] };
 
 export type Project = {
   slug: string;
@@ -126,11 +287,8 @@ export const projects: Project[] = [
         title: "BBVA Francés App Redesign",
         subtitle:
           "Simplifying the home screen and transfer flow to improve the mobile banking experience",
-        images: [
-          { src: "/projects/bbva-frances/destination-account.png", alt: "Destination account screen" },
-          { src: "/projects/bbva-frances/home-screen.png", alt: "Redesigned home screen" },
-          { src: "/projects/bbva-frances/transfer-amount.png", alt: "Transfer amount screen" },
-        ],
+        video: { src: "/projects/bbva-frances/cover-demo.mp4", alt: "App preview walkthrough" },
+        watermark: { src: "/projects/bbva-frances/bbva-logo.svg", alt: "BBVA Francés logo" },
         meta: [
           { label: "Role", value: "UX/UI Designer" },
           { label: "Duration", value: "10 Days" },
@@ -247,8 +405,10 @@ export const projects: Project[] = [
               "Automatic validation",
             ],
             images: [
-              { src: "/projects/bbva-frances/destination-account.png", alt: "Recipient screen, empty state with recent contacts" },
-              { placeholder: "Recipient screen, filled state: alias/CBU/CVU entered and validated" },
+              {
+                videoSrc: "/projects/bbva-frances/step-1-recipient-demo.mp4",
+                alt: "Screen recording of the recipient step: entering an alias/CBU/CVU with live validation",
+              },
             ],
           },
           {
@@ -260,7 +420,10 @@ export const projects: Project[] = [
               "Option to save contact",
             ],
             images: [
-              { placeholder: "Data confirmation screen: recipient name + bank validated, full CBU and CUIT, \"save contact\" option" },
+              {
+                videoSrc: "/projects/bbva-frances/step-2-data-confirmation-demo.mp4",
+                alt: "Screen recording of the data confirmation step: recipient name and bank validated, full CBU and CUIT shown, save-contact option",
+              },
             ],
           },
           {
@@ -272,7 +435,10 @@ export const projects: Project[] = [
               "Confirm transfer button",
             ],
             images: [
-              { src: "/projects/bbva-frances/transfer-amount.png", alt: "Transfer amount screen with numeric keypad and source account selection" },
+              {
+                videoSrc: "/projects/bbva-frances/step-3-amount-source-demo.mp4",
+                alt: "Screen recording of the amount step: numeric keypad, visible balance, and source account selection",
+              },
             ],
           },
           {
@@ -284,7 +450,10 @@ export const projects: Project[] = [
               "Operation number, date, and time visible",
             ],
             images: [
-              { placeholder: "Success screen: confirmation status, receipt, operation number, date and time" },
+              {
+                src: "/projects/bbva-frances/step-4-success.png",
+                alt: "Success screen: confirmation status, receipt, operation number, date and time",
+              },
             ],
           },
         ],
@@ -327,18 +496,18 @@ export const projects: Project[] = [
           {
             title: "Phase 1: Validation",
             items: [
-              "User testing: 5 to 8 participants",
-              "Measured: time on task, error rate, satisfaction",
-              "Iteration based on findings",
+              "Usability testing: 5–8 users",
+              "Track time, errors, satisfaction",
+              "Iterate on findings",
             ],
           },
           {
             title: "Phase 2: Expansion",
             items: [
               "Pay bills (pain point #2)",
-              "Account details and transaction history",
-              "Card management feature",
-              "Settings and profile",
+              "Account & transaction history",
+              "Card management",
+              "Settings & profile",
             ],
           },
           {
@@ -346,33 +515,552 @@ export const projects: Project[] = [
             items: [
               "Documentation",
               "Component library",
-              "Transition and animation guides",
-              "Handoff to the development team",
+              "Animation & transition guides",
+              "Dev team handoff",
             ],
           },
         ],
-      },
-      {
-        type: "disclaimer",
-        text: "This is a personal conceptual redesign project created for educational and portfolio purposes. I am not affiliated with BBVA Francés, nor was I hired by the company to do this work. All proposals and designs are hypothetical and do not represent official BBVA plans. The brands, logos, and trade names shown are the property of their respective owners and are used solely for illustrative purposes in this case study.",
+        disclaimer:
+          "This is a personal conceptual redesign project created for educational and portfolio purposes. I am not affiliated with BBVA Francés, nor was I hired by the company to do this work. All proposals and designs are hypothetical and do not represent official BBVA plans. The brands, logos, and trade names shown are the property of their respective owners and are used solely for illustrative purposes in this case study.",
       },
     ],
   },
   {
     slug: "tribu-music",
     title: "Tribu Music",
-    tagline: "Product design case study for a music platform.",
+    tagline: "A mobile app that connects people through live music.",
     tags: ["Product Design", "UI"],
-    coverImage: null,
-    coverAlt: "Screens from the Tribu Music project",
+    coverImage: "/projects/tribu-music/hifi-screen-discover.png",
+    coverAlt: "Screens from the Tribu Music app redesign",
     behanceUrl: "https://www.behance.net/gallery/241107187/Tribu-Music-Caso-de-estudio",
-    contentReady: false,
+    contentReady: true,
     sections: {
-      context: { heading: "Context & problem", body: "TODO: content pending" },
-      process: { heading: "Process", body: "TODO: content pending" },
-      decisions: { heading: "Key decisions", body: "TODO: content pending" },
-      result: { heading: "Result", body: "TODO: content pending" },
+      context: {
+        heading: "Context & problem",
+        body: "Tribu Music is a mobile app designed to connect people through live music — discovering nearby concerts and events, and connecting with others who share similar musical interests, based on in-depth UX research into the pain points of concertgoers.",
+      },
+      process: {
+        heading: "Process",
+        body: "Happy-path mapping, low-fidelity sketches digitized into wireframes, a defined grid and spacing system, Material Design 3 mid-fidelity wireframes, in-person usability testing with 5 users, and a full UI Kit ahead of the final high-fidelity screens.",
+      },
+      decisions: {
+        heading: "Key decisions",
+        body: "Replaced the ambiguous search icon with the brand logo as the home anchor, renamed \"My music tastes\" to the clearer \"Favorites\", and reorganized the action hierarchy on the event profile screen based on usability findings.",
+      },
+      result: {
+        heading: "Result",
+        body: "A WCAG 2.1 AA–compliant high-fidelity prototype with a complete design system (color, type, spacing, components), validated through usability testing with a 100% task success rate.",
+      },
     },
+    caseStudyBlocks: [
+      {
+        type: "hero",
+        title: "Tribu Music",
+        subtitle:
+          "A mobile app that connects people through live music — discover nearby concerts and connect with others who share your taste.",
+        images: [
+          { src: "/projects/tribu-music/hero-discover-screen.png", alt: "Tribu Music app Discover screen" },
+        ],
+        mockupRadius: "9px",
+        watermark: { src: "/projects/tribu-music/tribu-logo-white.svg", alt: "Tribu Music logo" },
+        meta: [
+          { label: "Role", value: "UX/UI Designer" },
+          { label: "Program", value: "Talento Tech" },
+          { label: "Date", value: "December 2025" },
+        ],
+        tags: ["Case study", "December 2025"],
+      },
+      {
+        type: "context",
+        heading: "01 · Context",
+        subheading: "Research, benchmarking, and the target user",
+        intro:
+          "Tribu Music is a mobile app designed to connect people through live music. The app makes it possible to discover nearby concerts and music events, and helps users connect with others who share similar musical interests.",
+        insightsHeading: "Key research insights:",
+        insights: [
+          "Users look for consolidated information about nearby concerts",
+          "There's a need to connect with other people before the event",
+          "Ticket purchasing needs to be accessible and visible",
+          "Users value being able to coordinate attendance with groups",
+        ],
+        researchHeading: "Initial Research",
+        researchText:
+          "The project started from an in-depth UX research process carried out by the research team, which identified the needs and pain points of users who attend live music events.",
+        benchmarkingHeading: "Benchmarking",
+        benchmarkingColumns: ["Apps", "Strengths", "Weaknesses"],
+        benchmarkingRows: [
+          {
+            app: "Spotify",
+            logo: "/projects/tribu-music/logos/app-spotify.png",
+            strengths:
+              "Uses your Spotify listening data to recommend concerts. Good variety of offerings in Argentina, ranging from small to large artists.",
+            weaknesses:
+              "The concerts feature is hard to find among so much content. The paid tier limits usage, and there's no search or filter for concerts — only recommendation-based browsing.",
+          },
+          {
+            app: "Concert discovery app",
+            logo: "/projects/tribu-music/logos/app-b.png",
+            strengths:
+              "Can link with a Spotify, Amazon, or Apple account. Wide variety of offerings in Argentina, covering both large and mid-size artists. Filter by genre, location, and more.",
+            weaknesses:
+              "Navigating the app can be confusing, as can certain buttons' functions. The profile section and its features are unclear.",
+          },
+          {
+            app: "Event social app",
+            logo: "/projects/tribu-music/logos/app-c.png",
+            strengths:
+              "Event chats for the shows you're attending, letting you connect with people going to the same event. You can also upload photos from the show.",
+            weaknesses:
+              "Several bugs in how the app functions. Very little presence in Argentina, and the app's flow feels confusing due to how much information is packed in without hierarchy.",
+          },
+        ],
+        benchmarkingCtaLabel: "View full benchmarking",
+        persona: {
+          name: "Victoria Rodríguez",
+          quote: "Discover the world, discover what's inside you.",
+          photo: { src: "/projects/tribu-music/victoria-rodriguez.jpg", alt: "Victoria Rodríguez" },
+          fields: [
+            { label: "Age", value: "25 years old" },
+            { label: "Gender", value: "Female" },
+            { label: "Location", value: "Avellaneda, Greater Buenos Aires" },
+            { label: "Marital status", value: "Single" },
+            { label: "Occupation", value: "Tattoo artist" },
+          ],
+          justificacionLabel: "Why this persona",
+          justificacion:
+            "She's interested in experiencing live music and learning more about Argentina's emerging music scene. She's young and part of the digitally native generation.",
+          bioLabel: "Bio",
+          bio: "Victoria has been running her own private tattoo studio for a few months now. She currently lives with her parents in the southern suburbs, but loves Buenos Aires' cultural scene. She likes to work and find inspiration through music, which accompanies her throughout her workday. While she's fascinated by CABA's cultural scene, she doesn't always find out about events in time and ends up missing most of the plans.",
+          objetivosLabel: "Goals",
+          objetivos: [
+            "Listen to more live music and discover new artists.",
+            "Not miss any show from her favorite bands.",
+            "Not depend on friends or people she follows to find out about news or events.",
+          ],
+          motivacionesLabel: "Motivations",
+          motivaciones: [
+            "Being able to connect with new artists and music genres.",
+            "Feeling fulfilled seeing her favorite artists live.",
+            "Being inspired by other artists' scenes and movements.",
+          ],
+          frustracionesLabel: "Frustrations",
+          frustraciones: [
+            "Missing an artist's show and finding out days later through friends' stories or people she follows.",
+            "Difficulty finding out about music events in CABA since she doesn't live in the city.",
+            "Always listening to the same playlist.",
+          ],
+          habilidadesLabel: "Tech skills",
+          habilidades: "She's comfortable with apps — uses TikTok, Instagram, Twitter, and YouTube.",
+        },
+        personaCtaLabel: "View full archetype",
+      },
+      {
+        type: "design-process",
+        heading: "02 · Design Process",
+        subheading: "From hand-drawn sketches to Material Design 3 wireframes",
+        happyPathHeading: "Happy Path",
+        happyPathText:
+          "As the first step of the design process, we mapped out a happy path identifying the 6 minimum views needed for the app's core flow.",
+        happyPathImages: [
+          { src: "/projects/tribu-music/sketch-login.png", alt: "Hand-drawn sketch of the login screen", label: "Login" },
+          { src: "/projects/tribu-music/sketch-community.png", alt: "Hand-drawn sketch of the community screen", label: "Community" },
+          { src: "/projects/tribu-music/sketch-chat.png", alt: "Hand-drawn sketch of the chat screen", label: "Chat" },
+          { src: "/projects/tribu-music/sketch-discover.png", alt: "Hand-drawn sketch of the discover screen", label: "Discover" },
+          { src: "/projects/tribu-music/sketch-settings.png", alt: "Hand-drawn sketch of the settings screen", label: "Settings" },
+          { src: "/projects/tribu-music/sketch-profile.png", alt: "Hand-drawn sketch of the profile screen", label: "Profile" },
+        ],
+        digitizationHeading: "Digitizing the Happy Path",
+        digitizationText:
+          "As the first step of the design process, we mapped out a happy path identifying the 6 minimum views needed for the app's core flow.",
+        digitizationImages: [
+          { src: "/projects/tribu-music/wireframe-lofi-login.png", alt: "Digitized low-fidelity wireframe of the login screen", label: "Login" },
+          { src: "/projects/tribu-music/wireframe-lofi-community.png", alt: "Digitized low-fidelity wireframe of the community screen", label: "Community" },
+          { src: "/projects/tribu-music/wireframe-lofi-chat.png", alt: "Digitized low-fidelity wireframe of the chat screen", label: "Chat" },
+          { src: "/projects/tribu-music/wireframe-lofi-discover.png", alt: "Digitized low-fidelity wireframe of the discover screen", label: "Discover" },
+          { src: "/projects/tribu-music/wireframe-lofi-settings.png", alt: "Digitized low-fidelity wireframe of the settings screen", label: "Settings" },
+          { src: "/projects/tribu-music/wireframe-lofi-profile.png", alt: "Digitized low-fidelity wireframe of the profile screen", label: "Profile" },
+        ],
+        gridHeading: "Grid System & Structure",
+        gridText:
+          "Before moving on to mid-fidelity wireframes, we established a consistent design system. Technical specifications:",
+        gridSpecs: [
+          { label: "Grid", value: "4 columns" },
+          { label: "Margins", value: "16px" },
+          { label: "Gutters", value: "8px" },
+          { label: "Spacing system", value: "Defined tokens (xs: 4px, sm: 8px, md: 16px, lg: 24px, xl: 32px)" },
+        ],
+        gridDemoImage: {
+          src: "/projects/tribu-music/grid-system-demo.png",
+          alt: "Grid overlay across the app's core screens showing 4-column structure with 16px margins",
+        },
+        midFiHeading: "Mid-Fidelity Wireframes",
+        midFiText:
+          "We developed mid-fidelity wireframes incorporating Material Design 3 patterns. At this stage we added every screen needed to build an interactive prototype suitable for user testing.",
+        midFiImages: [
+          { src: "/projects/tribu-music/wireframe-midfi-login.png", alt: "Mid-fidelity wireframe of the login screen", label: "Login" },
+          { src: "/projects/tribu-music/wireframe-midfi-community.png", alt: "Mid-fidelity wireframe of the community screen", label: "Community" },
+          { src: "/projects/tribu-music/wireframe-midfi-chat.png", alt: "Mid-fidelity wireframe of the chat screen", label: "Chat" },
+          { src: "/projects/tribu-music/wireframe-midfi-discover.png", alt: "Mid-fidelity wireframe of the discover screen", label: "Discover" },
+          { src: "/projects/tribu-music/wireframe-midfi-settings.png", alt: "Mid-fidelity wireframe of the settings screen", label: "Settings" },
+          { src: "/projects/tribu-music/wireframe-midfi-event.png", alt: "Mid-fidelity wireframe of the event profile screen", label: "Event Profile" },
+        ],
+        figmaLinkLabel: "View on Figma",
+        figmaLinkHref:
+          "https://www.figma.com/design/lEMkBV42DJcfRvPf1TUCDU/Curso-UI---Micieli-Florencia?node-id=554-4414&t=SW1tVbjaGYvh1s8m-4",
+      },
+      {
+        type: "usability-test",
+        heading: "03 · Usability Testing",
+        subheading:
+          "We conducted in-person usability tests with 5 users, ages 25–35 — 100% task success",
+        tasks: [
+          "Search for the Bad Bunny concert using the search feature and go to the channel for people attending the event",
+          "Go to Juan Pérez's chat, one of the people you connected with earlier",
+          "Access the settings section within the app",
+          'Go to the "My music tastes" section',
+        ],
+        resultsHeading: "Qualitative Results",
+        resultsTable: {
+          columns: ["Tasks", "Success Rate", "Avg. Time", "Avg. Clicks", "Time Range"],
+          rows: [
+            ["Sign up for the app", "100%", "00:08", "3.6", "00:05 - 00:15"],
+            ["Search for a concert and go to the event channel", "100%", "00:10", "4.2", "00:08 - 00:12"],
+            ["Go to Juan Perez's chat", "100%", "00:17", "7.2", "00:05 - 00:54"],
+            ['"Settings" section', "100%", "00:04", "1.2", "00:01 - 00:12"],
+            ['"My music tastes" section', "100%", "00:09", "3.2", "00:04 - 00:26"],
+          ],
+        },
+        viewAllLabel: "View more",
+        findingsHeading: "Key Findings",
+        findings: [
+          "Success rate: 100%",
+          "Efficiency compromised: high variability in time and clicks",
+          "Satisfaction: only 40% completed tasks without confusion, 60% reported difficulties",
+        ],
+        analysisHeading: "Analysis",
+        analysis: [
+          {
+            title: "Confusion with the search icon:",
+            text: "users didn't understand whether the search icon represented the app's home screen, causing disorientation in the main navigation",
+          },
+          {
+            title: 'Ambiguity in "My music tastes":',
+            text: "the label wasn't clear and didn't effectively communicate its purpose, contributing to the high variability in time (4 to 26 seconds) and clicks (2 to 8)",
+          },
+          {
+            title: "No purchase CTA:",
+            text: "several users explicitly asked how to buy tickets, showing that this function wasn't sufficiently accessible or visible",
+          },
+        ],
+        surveyHeading: "Survey Results",
+        surveyCharts: [
+          {
+            question: "Were you able to complete all the tasks in the app?",
+            slices: [
+              { label: "No problem", value: 60 },
+              { label: "Some confusion", value: 40 },
+            ],
+          },
+          {
+            question: "How was your experience connecting with other people in the app?",
+            slices: [
+              { label: "Very Good", value: 20 },
+              { label: "Bad", value: 20 },
+              { label: "Neutral", value: 20 },
+              { label: "Good", value: 40 },
+            ],
+          },
+          {
+            question: "Do you feel the app offers the features needed to find concerts and connect with other users?",
+            slices: [
+              { label: "Completely", value: 40 },
+              { label: "Partially", value: 60 },
+            ],
+          },
+        ],
+        improvementsHeading: "Improvements Implemented",
+        improvementsIntro: "Based on the testing findings, we implemented the following design improvements:",
+        improvements: [
+          "Replaced the search icon with the brand logo. This clearly identifies the home screen, establishing a clear starting point for navigation and reinforcing visual identity.",
+          'Changed "My music tastes" to "Favorites": replacing it with more universal, concise wording that reduces cognitive load.',
+          "Reorganized the action hierarchy on the event profile screen",
+        ],
+        beforeAfterHeading: "Before / After",
+        beforeAfterPairs: [
+          {
+            label: "Home screen icon",
+            before: { src: "/projects/tribu-music/before-search-icon.png", alt: "Before: search icon used as the home tab icon" },
+            after: { src: "/projects/tribu-music/after-search-icon.png", alt: "After: brand logo used as the home tab icon" },
+          },
+          {
+            label: 'Settings label ("My music tastes" → "Favorites")',
+            before: { src: "/projects/tribu-music/before-mis-gustos.png", alt: 'Before: settings list showing "My music tastes"' },
+            after: { src: "/projects/tribu-music/after-favoritos.png", alt: 'After: settings list showing "Favorites"' },
+          },
+          {
+            label: "Event profile action hierarchy",
+            before: { src: "/projects/tribu-music/before-perfil-recital.png", alt: "Before: event profile screen with original action hierarchy" },
+            after: { src: "/projects/tribu-music/after-perfil-recital.png", alt: "After: event profile screen with reorganized action hierarchy" },
+          },
+        ],
+      },
+      {
+        type: "brand-identity",
+        heading: "04 · Visual Identity",
+        subheading: "Logo, voice and tone, color, typography, and spacing",
+        logoHeading: "Logo",
+        logoIntro: "Combined logotype (symbol + modular typography) made up of:",
+        logoBullets: [
+          "Frequency bars: represent music as visual data — simple, rounded shapes that scale without issue",
+          "Barlow Condensed Extrabold typeface: has a modern presence characteristic of festival posters and stays legible in small spaces",
+          "Violet color: conveys creativity, nighttime energy, and a premium experience",
+        ],
+        logoHorizontal: { src: "/projects/tribu-music/logo-horizontal.svg", alt: "Tribu Music horizontal logo lockup" },
+        logoVertical: { src: "/projects/tribu-music/logo-vertical.svg", alt: "Tribu Music vertical logo lockup" },
+        voiceHeading: "Voice & Tone",
+        voiceTitle: "Brand voice:",
+        voiceBullets: [
+          "Participatory and clear: empathetic content that facilitates interaction",
+          "Simple: anyone can understand the content, regardless of background or education level",
+        ],
+        toneTitle: "Tone:",
+        toneBullets: [
+          'Warm and friendly: uses the informal "vos" to convey closeness while keeping respect',
+          "Short and direct: concise writing that makes it easy to find and resolve things quickly",
+          "Added-value messaging: communicating benefits from the start",
+        ],
+        colorHeading: "Color System",
+        colorSwatches: [
+          { name: "Primary", hex: "#121212" },
+          { name: "Secondary", hex: "#FAFAFA" },
+          { name: "Accent", hex: "#D4B5FF" },
+        ],
+        colorUsageTitle: "UI application:",
+        colorUsageBullets: [
+          "Primary action: violet background, black text",
+          "Secondary action: transparent background, white border and text",
+          "Tertiary (ghost) action: transparent background, violet border and text",
+        ],
+        colorAccessibilityTitle: "Accessibility:",
+        colorAccessibilityBullets: [
+          "Primary text (white / black): 18.5:1",
+          "Secondary text (70% opacity): 7.8:1",
+          "Primary button (black / violet): 8.2:1",
+          "Active icon (violet / black): 4.9:1",
+        ],
+        viewAllLabel: "View more",
+        typographyHeading: "Typography",
+        fontFamiliesTitle: "Type families:",
+        fontFamilies: [
+          "Primary: Roboto (UI, body text)",
+          "Alternative: Open Sans (fallback)",
+          "Logo: Barlow Condensed (brand use only)",
+        ],
+        typeScaleTitle: "Type scale:",
+        typeScaleTable: {
+          columns: ["Use", "Size", "Weight", "Line Height"],
+          rows: [
+            ["H1", "28 px", "Extrabold", "36 px"],
+            ["H2", "22 px", "Bold", "28 px"],
+            ["H3", "18 px", "Medium", "24 px"],
+            ["Body Large", "16 px", "Regular", "24 px"],
+            ["Body Medium", "14 px", "Regular", "20 px"],
+            ["Body Small", "12 px", "Regular", "16 px"],
+            ["Button", "16 px", "Bold", "Auto"],
+          ],
+        },
+        iconographyHeading: "Iconography",
+        iconSpecsTitle: "Specifications:",
+        iconSpecs: [
+          "Primary color: violet for highlighted actions",
+          "Secondary color: white (70%) for navigation",
+          "Standard sizes: 24 px, 30 px, 34 px",
+        ],
+        iconUsageTitle: "Color usage:",
+        iconUsageBullets: [
+          "Active navigation icons: violet",
+          "Inactive navigation icons: white (38%)",
+          "Informational icons: white (70%)",
+        ],
+        spacingHeading: "Spacing & Layout",
+        spacingTitle: "Spacing scale:",
+        spacingTable: {
+          columns: ["Token", "Value", "Usage"],
+          rows: [
+            ["xs", "4 px", "Minimum spacing"],
+            ["sm", "8 px", "Between related elements"],
+            ["md", "16 px", "Standard spacing"],
+            ["lg", "24 px", "Between sections"],
+            ["xl", "32 px", "Separation between blocks"],
+          ],
+        },
+        radiusTitle: "Border radii:",
+        radiusTable: {
+          columns: ["Element", "Radius"],
+          rows: [
+            ["Buttons", "25 px (fully rounded)"],
+            ["Icon buttons", "8 px"],
+            ["Cards", "12 px"],
+            ["Modals", "16 px"],
+            ["Inputs", "8 px"],
+            ["Chips", "16 px"],
+            ["Tags", "16 px"],
+          ],
+        },
+      },
+      {
+        type: "ui-kit",
+        heading: "05 · UI Kit & Components",
+        subheading: "Every component and state, ready for high fidelity",
+        intro:
+          "We built a complete UI Kit with every component needed for the high-fidelity implementation, including all of its states:",
+        groups: [
+          {
+            title: "Text Fields",
+            images: [
+              {
+                src: "/projects/tribu-music/uikit-textfields.png",
+                alt: "Text field states: default, focused, error, filled, disabled",
+                label: "Default / Focused / Error / Filled / Disabled",
+              },
+            ],
+          },
+          {
+            title: "Cards",
+            images: [
+              { src: "/projects/tribu-music/uikit-cards-1.png", alt: "Card component states", label: "Default / Hover / Pressed" },
+              { src: "/projects/tribu-music/uikit-cards-2.png", alt: "Card component states, alternate layout", label: "Default / Hover / Pressed" },
+            ],
+          },
+          {
+            title: "Top Bar",
+            images: [{ src: "/projects/tribu-music/uikit-topbar.png", alt: "Top bar component", label: "Top Bar" }],
+          },
+          {
+            title: "Buttons",
+            images: [
+              { src: "/projects/tribu-music/uikit-btn-primary.png", alt: "Primary button states", label: "Primary — Default / Hover / Pressed / Disabled" },
+              { src: "/projects/tribu-music/uikit-btn-secondary.png", alt: "Secondary button states", label: "Secondary — Default / Hover / Pressed / Disabled" },
+              { src: "/projects/tribu-music/uikit-btn-ghost.png", alt: "Ghost button states", label: "Ghost — Default / Hover / Pressed / Disabled" },
+              { src: "/projects/tribu-music/uikit-btn-error.png", alt: "Error button states", label: "Error — Default / Hover / Pressed / Disabled" },
+              { src: "/projects/tribu-music/uikit-btn-textlink.png", alt: "Text link button states", label: "Text Link — Default / Hover / Pressed / Disabled" },
+              { src: "/projects/tribu-music/uikit-btn-icon.png", alt: "Icon button states", label: "Icon Button — Default / Focused" },
+            ],
+          },
+          {
+            title: "Navigation Bar",
+            images: [{ src: "/projects/tribu-music/uikit-navbar.png", alt: "Navigation bar component", label: "Navigation Bar" }],
+          },
+          {
+            title: "Tab Bar",
+            images: [{ src: "/projects/tribu-music/uikit-tabbar.png", alt: "Tab bar component", label: "Tab Bar" }],
+          },
+          {
+            title: "List Item",
+            images: [{ src: "/projects/tribu-music/uikit-listitem.png", alt: "List item component", label: "List Item" }],
+          },
+          {
+            title: "Chat Bubbles",
+            images: [{ src: "/projects/tribu-music/uikit-chatbubbles.png", alt: "Chat bubble components", label: "Chat Bubbles" }],
+          },
+        ],
+      },
+      {
+        type: "prototype",
+        heading: "06 · High-Fidelity Prototype",
+        subheading: "Testing improvements applied to the final screens",
+        intro: "The improvements identified in testing were applied to the high-fidelity version, where we implemented:",
+        bullets: [
+          "Final color palette",
+          "Typography per the established system",
+          "UI Kit components",
+          "Interactions and micro-animations",
+          "States for every element",
+        ],
+        linkLabel: "View Prototype",
+        linkHref:
+          "https://www.figma.com/design/lEMkBV42DJcfRvPf1TUCDU/Curso-UI---Micieli-Florencia?node-id=560-5065&t=SW1tVbjaGYvh1s8m-4",
+        screens: [
+          { src: "/projects/tribu-music/hifi-screen-login.png", alt: "High-fidelity login screen", label: "Login" },
+          { src: "/projects/tribu-music/hifi-screen-discover.png", alt: "High-fidelity discover/home screen", label: "Discover" },
+          { src: "/projects/tribu-music/hifi-screen-event.png", alt: "High-fidelity event profile screen (Bad Bunny)", label: "Event Profile" },
+          { src: "/projects/tribu-music/hifi-screen-channels.png", alt: "High-fidelity community/channels screen", label: "Community" },
+          { src: "/projects/tribu-music/hifi-screen-chat.png", alt: "High-fidelity individual chat screen with Juan Perez", label: "Chat" },
+          { src: "/projects/tribu-music/hifi-screen-settings.png", alt: "High-fidelity settings screen", label: "Settings" },
+        ],
+      },
+      {
+        type: "accessibility",
+        heading: "07 · Accessibility",
+        subheading: "WCAG 2.1 AA compliance across the whole design",
+        intro:
+          "Tribu Music's design meets WCAG 2.1 Level AA accessibility requirements across every applicable area. Areas verified:",
+        areas: [
+          "Color contrast",
+          "Text sizes",
+          "Touch areas",
+          "Component states",
+          "Consistent navigation",
+          "Accessible forms",
+        ],
+        typographyColorHeading: "Typography & Color",
+        typographyColorIntro: "Every color pair exceeds the required minimums:",
+        contrastTable: {
+          columns: ["Element", "Contrast Ratio", "WCAG Minimum", "Status"],
+          rows: [
+            ["Primary text (#FAFAFA / #121212)", "18.5:1", "4.5:1", "✅"],
+            ["Secondary text (70% opacity)", "7.8:1", "4.5:1", "✅"],
+            ["Primary button (#121212 / #D4B5FF)", "8.2:1", "4.5:1", "✅"],
+            ["Active icon (#D4B5FF / #121212)", "4.9:1", "3:1", "✅"],
+            ["Elevated surface (#FAFAFA / #1E1E1E)", "17.2:1", "4.5:1", "✅"],
+          ],
+        },
+        touchHeading: "Touch Areas",
+        touchIntro: "Every touch target exceeds the minimum required size:",
+        touchTable: {
+          columns: ["Element", "Size", "AA Minimum", "Status"],
+          rows: [
+            ["Buttons", "48 px height", "24x24 px", "✅ Exceeds AAA"],
+            ["Inputs", "56 px height", "24x24 px", "✅ Exceeds AAA"],
+            ["Navigation icons", "40x40 px total area", "24x24 px", "✅ Exceeds AAA"],
+            ["Tappable cards", "160x180 px", "24x24 px", "✅ Exceeds AAA"],
+          ],
+        },
+        formsHeading: "Forms & Controls",
+        formsLabelsTitle: "Labels & messages:",
+        formsLabelsBullets: [
+          "Every input has a visible, descriptive label",
+          "Labels sit immediately next to their inputs",
+          "Error messages use a red border + descriptive text below the input",
+          "Descriptive placeholders with clear examples",
+        ],
+        formsStatesTitle: "Input states:",
+        formsStatesBullets: ["Clearly differentiated states (default, focus, error, success)"],
+        resultsHeading: "Compliance Results",
+        complianceTable: {
+          columns: ["Criteria", "Status"],
+          rows: [
+            ["Color contrast", "Meets"],
+            ["Text sizes", "Meets"],
+            ["Touch areas", "Meets"],
+            ["Component states", "Meets"],
+            ["Tappable cards", "Meets"],
+            ["Consistent navigation", "Meets"],
+            ["Accessible forms", "Meets"],
+          ],
+        },
+      },
+      {
+        type: "closing",
+        heading: "Thank You",
+        subheading: "Thanks for following this case study",
+        images: [
+          { src: "/projects/tribu-music/hifi-screen-discover.png", alt: "Tribu Music discover screen" },
+          { src: "/projects/tribu-music/hifi-screen-event.png", alt: "Tribu Music event profile screen" },
+          { src: "/projects/tribu-music/hifi-screen-chat.png", alt: "Tribu Music chat screen" },
+        ],
+      },
+    ],
   },
   {
     slug: "out",

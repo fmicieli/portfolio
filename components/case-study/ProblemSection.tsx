@@ -1,6 +1,10 @@
+"use client";
+
 import { Fragment } from "react";
+import { motion } from "framer-motion";
 import type { ProblemStat } from "@/data/projects";
 import { SectionHeading } from "@/components/case-study/SectionHeading";
+import { useTranslation } from "@/lib/i18n/ui";
 
 export function ProblemSection({
   heading,
@@ -16,31 +20,39 @@ export function ProblemSection({
   note: string;
 }) {
   const rows = Math.max(quotes.length, stats.length);
+  const t = useTranslation();
 
   return (
-    <div>
+    <div className="flex h-full flex-1 flex-col">
       <SectionHeading heading={heading} subheading={subheading} />
       {/* A single 2-column grid (not two independent lists) so each row's
           quote and stat box share the same auto-sized row height — grid
           items stretch to fill it by default, which is what keeps them
           visually aligned regardless of how much text either one has. */}
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <p className="text-xs font-medium uppercase tracking-[0.15em] text-fg-secondary">
-          Feedback
+      <div className="mt-title-to-content flex flex-1 flex-col justify-center">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <p className="text-label font-semibold uppercase tracking-[0.08em] text-text-secondary">
+          {t.caseStudy.feedback}
         </p>
-        <p className="text-xs font-medium uppercase tracking-[0.15em] text-fg-secondary">
-          Findings
+        <p className="text-label font-semibold uppercase tracking-[0.08em] text-text-secondary">
+          {t.caseStudy.findings}
         </p>
         {Array.from({ length: rows }, (_, i) => (
           <Fragment key={i}>
             {quotes[i] && (
-              <div className="flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm leading-relaxed text-fg-secondary">
+              <motion.div
+                className="flex flex-col items-center gap-3 rounded-card border border-border border-t-[var(--color-border-top-highlight)] bg-surface p-4 text-center text-body leading-relaxed text-text-secondary shadow-card backdrop-blur-card"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              >
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
                     aria-hidden="true"
-                    className="h-7 w-7 text-fg-secondary"
+                    className="h-7 w-7 text-text-secondary"
                   >
                     <circle cx="12" cy="8" r="4" fill="currentColor" />
                     <path
@@ -52,20 +64,35 @@ export function ProblemSection({
                   </svg>
                 </span>
                 <p>&ldquo;{quotes[i]}&rdquo;</p>
-              </div>
+              </motion.div>
             )}
             {stats[i] && (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center">
-                <p className="font-display text-3xl font-semibold text-accent-light">
+              <motion.div
+                className="flex flex-col items-center justify-center rounded-card border border-border border-t-[var(--color-border-top-highlight)] bg-surface p-4 text-center shadow-card backdrop-blur-card"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.1 + 0.05, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <p className="font-display text-stat-lg font-bold text-accent">
                   {stats[i].value}
                 </p>
-                <p className="mt-1 text-sm text-fg-secondary">{stats[i].label}</p>
-              </div>
+                <p className="mt-1 text-body text-text-secondary">{stats[i].label}</p>
+              </motion.div>
             )}
           </Fragment>
         ))}
       </div>
-      <p className="mt-4 text-xs text-fg-secondary/70">{note}</p>
+      <motion.p
+        className="mt-4 text-body text-text-secondary"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: false, margin: "-40px" }}
+        transition={{ duration: 0.5, delay: rows * 0.1 + 0.1 }}
+      >
+        {note}
+      </motion.p>
+      </div>
     </div>
   );
 }

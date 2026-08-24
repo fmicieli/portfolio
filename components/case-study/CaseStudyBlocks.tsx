@@ -8,34 +8,91 @@ import { FlowComparisonSection } from "@/components/case-study/FlowComparisonSec
 import { StepGuideSection } from "@/components/case-study/StepGuideSection";
 import { ImpactSection } from "@/components/case-study/ImpactSection";
 import { NextStepsSection } from "@/components/case-study/NextStepsSection";
+import { ContextSection } from "@/components/case-study/ContextSection";
+import { DesignProcessSection } from "@/components/case-study/DesignProcessSection";
+import { UsabilityTestSection } from "@/components/case-study/UsabilityTestSection";
+import { BrandIdentitySection } from "@/components/case-study/BrandIdentitySection";
+import { UiKitSection } from "@/components/case-study/UiKitSection";
+import { PrototypeSection } from "@/components/case-study/PrototypeSection";
+import { ClosingSection } from "@/components/case-study/ClosingSection";
 
 export function CaseStudyBlocks({ blocks }: { blocks: CaseStudyBlock[] }) {
+  // "Accessibility" no longer renders as its own top-level section — Brand
+  // Identity's "View all" popup absorbed it (see BrandIdentitySection.tsx),
+  // so it's looked up here by type and handed to it instead of being
+  // rendered from the map below. "UI Kit & Components" renders standalone
+  // again as its own section.
+  const accessibilityBlock = blocks.find((b) => b.type === "accessibility");
+
   return (
     <div className="flex flex-col divide-y divide-white/10">
       {blocks.map((block, i) => {
+        if (block.type === "accessibility") {
+          return null;
+        }
+
         if (block.type === "hero") {
           return (
-            <div key={i} className="pb-10">
+            <div key={i} className="flex h-screen max-h-screen flex-col justify-center pb-10 snap-start">
               <CaseStudyHero
                 title={block.title}
                 subtitle={block.subtitle}
                 meta={block.meta}
                 tags={block.tags}
+                images={block.images}
+                video={block.video}
+                watermark={block.watermark}
+                mockupRadius={block.mockupRadius}
               />
             </div>
           );
         }
 
-        if (block.type === "disclaimer") {
+        // Tall scroll-linked stepper, not a plain centered min-h-screen
+        // block: it manages its own height (one viewport per step) and
+        // sticky inner panel, so it renders outside the generic wrapper.
+        if (block.type === "step-guide") {
           return (
-            <p key={i} className="py-8 text-xs leading-relaxed text-fg-secondary/70">
-              {block.text}
-            </p>
+            <div key={i} className="snap-start">
+              <StepGuideSection heading={block.heading} subheading={block.subheading} steps={block.steps} />
+            </div>
+          );
+        }
+
+        // The last block of the page — still a full min-h-screen section
+        // like every other block (for a consistent one-viewport-per-section
+        // snap rhythm), but its content is top-aligned rather than
+        // vertically centered, with Footer pushed to the very bottom of
+        // that viewport via its own mt-auto (see NextStepsSection).
+        if (block.type === "next-steps") {
+          return (
+            <Reveal key={i} once={false} className="flex min-h-screen flex-col pt-section-top pb-12 snap-start">
+              <NextStepsSection
+                heading={block.heading}
+                subheading={block.subheading}
+                phases={block.phases}
+                disclaimer={block.disclaimer}
+              />
+            </Reveal>
+          );
+        }
+
+        // Tribu Music's closing block — same footer-embedded, full-viewport
+        // pattern as "next-steps" above (see ClosingSection's own comment).
+        if (block.type === "closing") {
+          return (
+            <Reveal key={i} once={false} className="flex min-h-screen flex-col pt-section-top pb-12 snap-start">
+              <ClosingSection heading={block.heading} subheading={block.subheading} images={block.images} />
+            </Reveal>
           );
         }
 
         return (
-          <Reveal key={i} className="py-12">
+          <Reveal
+            key={i}
+            once={false}
+            className="flex min-h-screen flex-col pt-section-top pb-12 snap-start"
+          >
             {block.type === "problem" && (
               <ProblemSection
                 heading={block.heading}
@@ -74,21 +131,124 @@ export function CaseStudyBlocks({ blocks }: { blocks: CaseStudyBlock[] }) {
                 highlights={block.highlights}
               />
             )}
-            {block.type === "step-guide" && (
-              <StepGuideSection
-                heading={block.heading}
-                subheading={block.subheading}
-                steps={block.steps}
-              />
-            )}
             {block.type === "impact" && (
               <ImpactSection heading={block.heading} cards={block.cards} />
             )}
-            {block.type === "next-steps" && (
-              <NextStepsSection
+            {block.type === "design-process" && (
+              <DesignProcessSection
                 heading={block.heading}
                 subheading={block.subheading}
-                phases={block.phases}
+                happyPathHeading={block.happyPathHeading}
+                happyPathText={block.happyPathText}
+                happyPathImages={block.happyPathImages}
+                digitizationHeading={block.digitizationHeading}
+                digitizationText={block.digitizationText}
+                digitizationImages={block.digitizationImages}
+                gridHeading={block.gridHeading}
+                gridText={block.gridText}
+                gridSpecs={block.gridSpecs}
+                gridDemoImage={block.gridDemoImage}
+                midFiHeading={block.midFiHeading}
+                midFiText={block.midFiText}
+                midFiImages={block.midFiImages}
+                figmaLinkLabel={block.figmaLinkLabel}
+                figmaLinkHref={block.figmaLinkHref}
+              />
+            )}
+            {block.type === "context" && (
+              <ContextSection
+                heading={block.heading}
+                subheading={block.subheading}
+                intro={block.intro}
+                insightsHeading={block.insightsHeading}
+                insights={block.insights}
+                researchHeading={block.researchHeading}
+                researchText={block.researchText}
+                benchmarkingHeading={block.benchmarkingHeading}
+                benchmarkingColumns={block.benchmarkingColumns}
+                benchmarkingRows={block.benchmarkingRows}
+                benchmarkingCtaLabel={block.benchmarkingCtaLabel}
+                persona={block.persona}
+                personaCtaLabel={block.personaCtaLabel}
+              />
+            )}
+            {block.type === "usability-test" && (
+              <UsabilityTestSection
+                heading={block.heading}
+                subheading={block.subheading}
+                tasks={block.tasks}
+                resultsHeading={block.resultsHeading}
+                resultsTable={block.resultsTable}
+                viewAllLabel={block.viewAllLabel}
+                findingsHeading={block.findingsHeading}
+                findings={block.findings}
+                analysisHeading={block.analysisHeading}
+                analysis={block.analysis}
+                surveyHeading={block.surveyHeading}
+                surveyCharts={block.surveyCharts}
+                improvementsHeading={block.improvementsHeading}
+                improvementsIntro={block.improvementsIntro}
+                improvements={block.improvements}
+                beforeAfterHeading={block.beforeAfterHeading}
+                beforeAfterPairs={block.beforeAfterPairs}
+              />
+            )}
+            {block.type === "brand-identity" && (
+              <BrandIdentitySection
+                heading={block.heading}
+                subheading={block.subheading}
+                logoHeading={block.logoHeading}
+                logoIntro={block.logoIntro}
+                logoBullets={block.logoBullets}
+                logoHorizontal={block.logoHorizontal}
+                logoVertical={block.logoVertical}
+                voiceHeading={block.voiceHeading}
+                voiceTitle={block.voiceTitle}
+                voiceBullets={block.voiceBullets}
+                toneTitle={block.toneTitle}
+                toneBullets={block.toneBullets}
+                colorHeading={block.colorHeading}
+                colorSwatches={block.colorSwatches}
+                colorUsageTitle={block.colorUsageTitle}
+                colorUsageBullets={block.colorUsageBullets}
+                colorAccessibilityTitle={block.colorAccessibilityTitle}
+                colorAccessibilityBullets={block.colorAccessibilityBullets}
+                viewAllLabel={block.viewAllLabel}
+                typographyHeading={block.typographyHeading}
+                fontFamiliesTitle={block.fontFamiliesTitle}
+                fontFamilies={block.fontFamilies}
+                typeScaleTitle={block.typeScaleTitle}
+                typeScaleTable={block.typeScaleTable}
+                iconographyHeading={block.iconographyHeading}
+                iconSpecsTitle={block.iconSpecsTitle}
+                iconSpecs={block.iconSpecs}
+                iconUsageTitle={block.iconUsageTitle}
+                iconUsageBullets={block.iconUsageBullets}
+                spacingHeading={block.spacingHeading}
+                spacingTitle={block.spacingTitle}
+                spacingTable={block.spacingTable}
+                radiusTitle={block.radiusTitle}
+                radiusTable={block.radiusTable}
+                accessibility={accessibilityBlock}
+              />
+            )}
+            {block.type === "ui-kit" && (
+              <UiKitSection
+                heading={block.heading}
+                subheading={block.subheading}
+                intro={block.intro}
+                groups={block.groups}
+              />
+            )}
+            {block.type === "prototype" && (
+              <PrototypeSection
+                heading={block.heading}
+                subheading={block.subheading}
+                intro={block.intro}
+                bullets={block.bullets}
+                linkLabel={block.linkLabel}
+                linkHref={block.linkHref}
+                screens={block.screens}
               />
             )}
           </Reveal>
